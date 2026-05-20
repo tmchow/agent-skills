@@ -343,18 +343,27 @@ clawpatch triage --json --no-input --no-color
 `clawpatch report --json` is the canonical machine-readable output. Always
 prefer it to scraping the human report.
 
+**`--json` writes the JSON envelope to *stdout*. `--output <path>` writes the
+*Markdown* report — not JSON — to a file.** There is no `--format` flag. To
+capture JSON to a file, redirect stdout; do **not** use `--output`:
+
 ```bash
-clawpatch report --json --no-input --no-color -o /tmp/clawpatch-findings.json
+clawpatch report --json --no-input --no-color > /tmp/clawpatch-findings.json
 ```
 
-`report` flags (per spec; verify with `--help`):
+`report` flags (verified against Clawpatch 0.3.0 `--help` — re-check on
+your version):
 
-| Flag                       | Purpose                                         |
-| -------------------------- | ----------------------------------------------- |
-| `--run <runId>`            | Limit to one run's findings                     |
-| `--severity <level>`       | Filter by severity                              |
-| `--format markdown\|json`  | Output format (`--json` is the global alias)    |
-| `-o <path>`                | Write to file                                   |
+| Flag                  | Purpose                                                  |
+| --------------------- | -------------------------------------------------------- |
+| `--status <status>`   | Filter by finding status (`open`, `fixed`, …)            |
+| `--severity <level>`  | Filter by severity                                       |
+| `--category <cat>`    | Filter by category                                       |
+| `--triage <triage>`   | Filter by triage assessment                              |
+| `--feature <id>`      | Findings for one feature                                 |
+| `--project <name>`    | Select project by name or root path                      |
+| `--json`              | Emit the JSON envelope on **stdout** (redirect to save)  |
+| `--output <path>`     | Write the **Markdown** report to a file (not JSON)       |
 
 ### `report --json` envelope and finding shape
 
@@ -417,13 +426,15 @@ finding ("is this a real bug?"). The `clawpatch triage` **command** is a
 separate dedup-and-prioritize pass that operates on the *set* of
 findings. Same word, different layers.
 
-**Always probe the shape first** before writing parser code — the wire
-format has drifted from `spec.md` at least twice (top-level envelope
-shape; `findingId` → `id`; evidence `file`/`line` → `path`/`startLine`/
-`endLine`). One safe preflight:
+**Always probe the shape first** before writing parser code — the docs and
+older skill versions have drifted from the real CLI more than once:
+top-level envelope shape; `findingId` → `id`; evidence `file`/`line` →
+`path`/`startLine`/`endLine`; and `--output` writes Markdown while JSON
+comes only from `--json` on stdout (there's no `--format` flag). One safe
+preflight (note the stdout redirect, not `--output`):
 
 ```bash
-clawpatch report --json --no-input --no-color -o /tmp/cp.json
+clawpatch report --json --no-input --no-color > /tmp/cp.json
 jq 'type, keys, (.items // .findings)[0] // empty' /tmp/cp.json | head -40
 ```
 
@@ -586,7 +597,7 @@ and pastes it inline into the subagent's prompt:
 
 ```bash
 # Main thread, in the research worktree:
-clawpatch report --json --no-input --no-color -o /tmp/cp.json
+clawpatch report --json --no-input --no-color > /tmp/cp.json
 
 # Per finding selected for fan-out:
 jq --arg id "<id>" '.items[] | select(.id == $id)' /tmp/cp.json \

@@ -16,7 +16,7 @@ output is also envelope-wrapped (`{ items: [...], findings: <count> }`).
 parsing anything, probe the live shape:
 
 ```bash
-clawpatch report --json --no-color -o /tmp/cp.json
+clawpatch report --json --no-color > /tmp/cp.json
 jq 'type, keys, (.items // .findings)[0] // empty' /tmp/cp.json | head -40
 ```
 
