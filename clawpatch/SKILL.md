@@ -82,6 +82,15 @@ tracked file — confirm with the user before editing it.
 
 The pipeline is `init → map → review → report`. `init` and `map` are local and
 cheap; `review` is the expensive step (~30–60s per feature with codex).
+
+Run `init && map` directly — they're **idempotent and non-destructive**, so an
+existing `.clawpatch/` just gets refreshed (`init` no-ops without `--force`;
+`map` re-classifies). Don't scan for the folder first, don't `--force`, and
+don't wipe it: the normal path destroys nothing, so there's no "blow away old
+data?" decision to make. Reset (`rm -r .clawpatch`) only for a deliberate
+clean slate — the state is disposable, but the real cost is re-running
+`review`, so mention that to the user rather than wiping silently.
+
 **Smoke-test first** (`review --limit 3`) and treat that as often-sufficient —
 don't reflexively sweep a whole repo; surface the time/cost before you do.
 
