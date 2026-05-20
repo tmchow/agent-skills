@@ -85,11 +85,21 @@ cheap; `review` is the expensive step (~30–60s per feature with codex).
 
 Run `init && map` directly — they're **idempotent and non-destructive**, so an
 existing `.clawpatch/` just gets refreshed (`init` no-ops without `--force`;
-`map` re-classifies). Don't scan for the folder first, don't `--force`, and
-don't wipe it: the normal path destroys nothing, so there's no "blow away old
-data?" decision to make. Reset (`rm -r .clawpatch`) only for a deliberate
-clean slate — the state is disposable, but the real cost is re-running
-`review`, so mention that to the user rather than wiping silently.
+`map` re-classifies). No scan, no `--force`.
+
+There's no natural point where the agent deletes `.clawpatch/`, so it
+persists and goes stale — `report` carries finding *statuses*
+(`fixed`/`wont-fix`/`uncertain`) across runs via signature dedup. Handle
+this at the **start** of a review, not as end-of-session cleanup:
+
+- **Continuing** the same review at the same commit → keep the state; that
+  resumption is what persistence is for.
+- **Fresh review** (new task, or HEAD moved since the recorded review commit)
+  → reset first (`rm -r .clawpatch`). Stale statuses otherwise carry forward
+  and mislead which findings you act on, and re-running `review` may not clear
+  them (signature dedup). Resetting only costs a re-review (state is
+  disposable) — prefer it over trusting stale state, with a light "resetting
+  for a clean review" heads-up, not a silent wipe.
 
 **Smoke-test first** (`review --limit 3`) and treat that as often-sufficient —
 don't reflexively sweep a whole repo; surface the time/cost before you do.
