@@ -1,23 +1,34 @@
 # clawpatch
 
-An agent skill that drives the [Clawpatch](https://clawpatch.ai) CLI
-(`openclaw/clawpatch`) — automated AI code review that produces concrete,
-locatable findings, then fixes them with explicit, validated, per-finding
-patches. The skill teaches your coding agent how to run Clawpatch, read its
-findings, choose a fix strategy, and avoid its sharp edges.
+An agent skill that lets your coding agent operate the
+[Clawpatch](https://clawpatch.ai) CLI (`openclaw/clawpatch`) — running its
+automated code review, reading the findings, choosing how to fix them, and
+steering around its sharp edges.
 
-## What you get
+**Clawpatch is the engine; this skill is the operating manual.** Clawpatch
+itself is a terminal CLI that reviews a repo into structured findings and can
+apply validated per-finding fixes. Handed to an agent cold, it gets fumbled:
+misread JSON, the wrong fix workflow, misleading hints followed, parallel-state
+hazards hit. This skill is the procedural knowledge that makes an agent drive
+it well. Installing it doesn't install Clawpatch (see Prerequisites) — it
+teaches your agent to use it.
 
-- Whole-repo or scoped review that yields structured findings (severity,
-  category, evidence, suggested fix), not vibes-level prose.
-- Two fix workflows with a clear decision guide:
-  - **Scanner-only** (default) — dispatch subagents to fix findings in
-    parallel, each in its own worktree, using your agent's own tooling.
-  - **Full-cycle** — Clawpatch's own `fix` loop, gated by
-    format/typecheck/lint/test validation.
-- Accurate wire-format JSON parsing, exit-code handling, and built-in guards
-  against the common pitfalls (acting on false positives, over-correction,
-  parallel-state hazards).
+## What the skill adds
+
+With it installed, your agent knows how to:
+
+- **Run and read the review** — drive `init → map → review → report` and parse
+  Clawpatch's *actual* wire-format JSON (which differs from its docs) instead
+  of guessing at fields.
+- **Pick the right fix strategy** — choose deliberately between *scanner-only*
+  (fix findings in parallel via subagents, each in its own worktree, using your
+  agent's own tooling) and *full-cycle* (Clawpatch's own `fix` loop, gated by
+  format/typecheck/lint/test), based on the repo and the task.
+- **Avoid the footguns** — not act on false positives, not over-correct past a
+  finding's scope, ignore Clawpatch's misleading `next:` hint, and never race
+  `clawpatch fix` on shared state.
+- **Hand off cleanly** — turn findings into commits/PRs via your agent's own
+  workflow or Clawpatch's `open-pr`, with the right context in each.
 
 ## Prerequisites
 
