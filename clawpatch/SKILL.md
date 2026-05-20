@@ -9,11 +9,7 @@ description: >-
   dispatch subagents to fix Clawpatch findings in parallel, or otherwise names
   Clawpatch or one of its commands. Do NOT use it for generic "review this
   code", "find bugs", or "code review" requests that don't involve Clawpatch —
-  those belong to a different tool. When Clawpatch is the tool, it covers
-  install/doctor, the lifecycle (init → map → review → report → fix →
-  revalidate → open-pr/land), the report-JSON gotchas, the
-  scanner-only-vs-full-cycle mode decision, parallel subagent dispatch,
-  exit-code handling, and PR handoff.
+  those belong to a different tool.
 version: 0.1.0
 metadata:
   openclaw:
@@ -73,6 +69,14 @@ just wants written; or when no provider CLI (`codex`/`grok`/`opencode`/`pi`/
 `clawpatch doctor` verifies the install and the provider. If `clawpatch` is
 missing: `npm install -g clawpatch`. The provider (codex by default) is the
 user's to install and authenticate — don't run login flows on their behalf.
+
+**Gitignore `.clawpatch/` up front — this is a prerequisite, not hygiene.**
+Once `init`/`review` write into `.clawpatch/`, an un-ignored state dir shows
+up as untracked files, which makes the worktree dirty — and `clawpatch fix`
+refuses to run on a dirty tree (exit 3). So ensure the repo's `.gitignore`
+contains the single line `.clawpatch/` *before* you review or fix, not after
+you hit the refusal (the line can be added even before `init`). It's a
+tracked file — confirm with the user before editing it.
 
 ## Review → findings
 
@@ -144,9 +148,9 @@ validation failure (exit 6 → `git restore .`), an oversized diff, or repeated
 
 ## State, safety, pitfalls
 
-- **Disposable state.** `.clawpatch/` is per-developer scratch. Gitignore the
-  whole directory (one line: `.clawpatch/`) so findings/patches don't leak
-  into commits. Rebuild any time with `init && map`; clean up with
+- **Disposable state.** `.clawpatch/` is per-developer scratch, gitignored
+  (see Setup — it's also what keeps `fix` from tripping the dirty-tree guard).
+  Rebuild any time with `init && map`; clean up with
   `[ -d .clawpatch ] && rm -r .clawpatch` (the guard avoids needing `rm -rf`).
 - **Never `--force` `fix`/`open-pr`, and never `clawpatch land`, without
   explicit user approval** — `--force` overrides the dirty-tree/validation
