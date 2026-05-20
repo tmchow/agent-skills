@@ -99,8 +99,9 @@ findings.** When code has moved since the last review:
 - `clawpatch review --since <ref>` reviews only the features changed since
   `<ref>`, adding findings for new code without a full re-review.
 
-Prefer those over trusting stale statuses *or* wiping. `rm -r .clawpatch` is a
-last resort for genuinely corrupt state, not the freshness tool — it discards
+Prefer those over trusting stale statuses *or* wiping. Wiping
+(`[ -d .clawpatch ] && rm -r .clawpatch` — guarded, never `rm -rf`) is a last
+resort for genuinely corrupt state, not the freshness tool — it discards
 resume context and costs a full re-review. (There's no `--resume` flag;
 "resume" just means the on-disk state is still there.)
 
@@ -168,12 +169,8 @@ interleaved patches don't merge). Stop and report on the first surprise:
 validation failure (exit 6 → `git restore .`), an oversized diff, or repeated
 `wont-fix`.
 
-## State, safety, pitfalls
+## Safety & pitfalls
 
-- **Disposable state.** `.clawpatch/` is per-developer scratch, gitignored
-  (see Setup — it's also what keeps `fix` from tripping the dirty-tree guard).
-  Rebuild any time with `init && map`; clean up with
-  `[ -d .clawpatch ] && rm -r .clawpatch` (the guard avoids needing `rm -rf`).
 - **Never `--force` `fix`/`open-pr`, and never `clawpatch land`, without
   explicit user approval** — `--force` overrides the dirty-tree/validation
   guards; `land` merges the PR.
