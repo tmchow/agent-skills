@@ -36,22 +36,29 @@ gh skill install tmchow/agent-skills clawpatch   # install
 
 ## Layout
 
-Each skill lives in its own top-level directory with a `SKILL.md` at its root
-and any supporting material under `references/`:
+Each skill lives in its own top-level directory with a `SKILL.md` (agent
+instructions) and a `README.md` (human landing page — what it does,
+prerequisites, install) at its root, plus any supporting material under
+`references/`:
 
 ```
 agent-skills/
 ├── clawpatch/
-│   ├── SKILL.md
+│   ├── SKILL.md          # agent-facing instructions
+│   ├── README.md         # human landing page
 │   └── references/
 │       ├── finding-schema.md
 │       └── full-cycle-mode.md
 └── <next-skill>/
-    └── SKILL.md
+    ├── SKILL.md
+    └── README.md
 ```
 
 Installers can pull the whole repo or a single skill by name (`--skill <name>`
 for `npx skills`, or the skill name as the second argument for `gh skill`).
+
+Adding a skill? See [`AGENTS.md`](AGENTS.md) for the conventions (frontmatter
+rules, the SKILL.md-vs-README split, validation).
 
 ## Compatibility
 

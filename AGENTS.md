@@ -1,0 +1,91 @@
+# agent-skills
+
+A personal, multi-skill collection of cross-platform AI agent skills
+(`SKILL.md` format), installable à la carte via `npx skills` or `gh skills`.
+Each skill is self-contained and works on any Agent-Skills-compatible runtime
+(Claude Code, OpenClaw, Hermes, Cursor, OpenCode, GitHub Copilot CLI, …). The
+point of this repo: distribute skills without maintaining a separate plugin
+per platform — people install the whole repo or pick individual skills.
+
+This guide is for anyone (human or agent) editing the repo. Keep it accurate
+when conventions change.
+
+## Repo layout
+
+- `<skill-name>/SKILL.md` — required. The agent-facing instructions.
+- `<skill-name>/README.md` — required. The human-facing landing page (below).
+- `<skill-name>/references/` — optional. Deep material loaded on demand.
+- Root `README.md` — the catalog: one row per skill.
+- Root `LICENSE` — MIT.
+
+## Adding or editing a skill
+
+1. Directory name == the skill's `name:` frontmatter, lowercase kebab-case
+   (`[a-z0-9-]`, no leading/trailing/double hyphens, 1–64 chars).
+2. Write `SKILL.md` (frontmatter + body rules below).
+3. Write `README.md` (human landing page — rules below).
+4. Put deep or optional material in `references/`, not in `SKILL.md`.
+5. Add a one-line row to the root `README.md` skill table.
+6. Validate (below) before committing.
+
+## SKILL.md frontmatter
+
+Required: `name`, `description`, `version`.
+
+- `name` — matches the directory; lowercase kebab-case.
+- `description` — third person ("This skill should be used when…"), ≤1024
+  characters, with **specific** trigger phrases. Make it tool/task-specific,
+  not generic: a skill wrapping tool X must not trigger on bare "do
+  X-category work" when X isn't named. Add an explicit "Do NOT use for …"
+  clause when the skill could be confused with a broader category.
+- `version` — semver; bump on meaningful change.
+
+Per-runtime metadata is **optional and additive**. Unknown frontmatter fields
+are ignored by runtimes that don't understand them, so these blocks are safe
+to include side by side:
+
+- `metadata.openclaw` — install directive, env vars, homepage, emoji.
+- `metadata.hermes` — tags, category, required toolsets.
+
+**Verify every runtime-specific field against that runtime's own docs before
+adding it. Do not fabricate frontmatter schemas** — a wrong field can break
+the skill silently in that runtime. The same goes for any CLI/command syntax
+quoted in a skill: confirm it against the tool's `--help`, don't guess.
+
+## SKILL.md body
+
+- Imperative/infinitive voice ("Run X", "Confirm Y"), not second person.
+- Progressive disclosure: keep the body focused; move long schemas, advanced
+  patterns, and edge cases to `references/`.
+- **No duplication across files.** A fact lives in `SKILL.md` *or* a
+  reference, never both — duplicated content drifts.
+- When a reference is mandatory before acting, gate it explicitly in the body
+  (a capsule summary + a "read `references/X.md` in full before …" stop).
+
+## Per-skill README.md
+
+The human-facing landing page. GitHub renders it when someone browses the
+skill directory, and it's what a person reads to decide whether to install.
+It is **not** the agent instructions — that's `SKILL.md`. Include:
+
+- One-paragraph what-it-is, in human framing.
+- **Prerequisites** — external tools, accounts, or credentials the skill
+  needs. This is the highest-value section; `SKILL.md` buries it.
+- The single install command for *this* skill (`npx skills` and/or `gh skill`).
+- A few capability bullets and a link to the upstream tool/API.
+- An explicit line: "SKILL.md is the agent-facing instructions; you don't
+  need to read it to use the skill."
+
+**Do not** restate the workflow, schema, exit codes, or step-by-step
+procedure from `SKILL.md` — that duplicates the agent doc and drifts. Keep the
+README to slow-changing metadata (purpose, prerequisites, install).
+
+## Validate before committing
+
+- Frontmatter parses as valid YAML.
+- `name` == directory name, lowercase kebab-case.
+- `description` ≤ 1024 characters.
+- Any install/command syntax in `README.md` or `SKILL.md` is real — checked
+  against the tool's `--help`, not guessed.
+- Installers (`npx skills`, `gh skill`) key off `SKILL.md`; a sibling
+  `README.md` is for humans and must never be required for the skill to run.
