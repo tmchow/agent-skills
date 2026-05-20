@@ -38,17 +38,15 @@ npx skills update             # everything
 
 Each skill lives in its own top-level directory with a `SKILL.md` (agent
 instructions) and a `README.md` (human landing page — what it does,
-prerequisites, install) at its root, plus any supporting material under
-`references/`:
+prerequisites, install) at its root. Deep material can optionally go in a
+`references/` subdir, but skills should stay thin and defer to the wrapped
+tool's own `--help`/output rather than re-document it:
 
 ```
 agent-skills/
 ├── clawpatch/
 │   ├── SKILL.md          # agent-facing instructions
-│   ├── README.md         # human landing page
-│   └── references/
-│       ├── finding-schema.md
-│       └── full-cycle-mode.md
+│   └── README.md         # human landing page
 └── <next-skill>/
     ├── SKILL.md
     └── README.md
