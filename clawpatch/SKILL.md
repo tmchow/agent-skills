@@ -87,19 +87,22 @@ Run `init && map` directly — they're **idempotent and non-destructive**, so an
 existing `.clawpatch/` just gets refreshed (`init` no-ops without `--force`;
 `map` re-classifies). No scan, no `--force`.
 
-There's no natural point where the agent deletes `.clawpatch/`, so it
-persists and goes stale — `report` carries finding *statuses*
-(`fixed`/`wont-fix`/`uncertain`) across runs via signature dedup. Handle
-this at the **start** of a review, not as end-of-session cleanup:
+State persists in `.clawpatch/` and there's no natural point where the agent
+deletes it, so findings — and their `fixed`/`wont-fix`/`uncertain` statuses —
+carry across runs. **That persistence is intentional: Clawpatch owns resume
+and freshness, so use its commands instead of hand-managing or wiping
+findings.** When code has moved since the last review:
 
-- **Continuing** the same review at the same commit → keep the state; that
-  resumption is what persistence is for.
-- **Fresh review** (new task, or HEAD moved since the recorded review commit)
-  → reset first (`rm -r .clawpatch`). Stale statuses otherwise carry forward
-  and mislead which findings you act on, and re-running `review` may not clear
-  them (signature dedup). Resetting only costs a re-review (state is
-  disposable) — prefer it over trusting stale state, with a light "resetting
-  for a clean review" heads-up, not a silent wipe.
+- `clawpatch revalidate --since <ref>` (or `--all`) re-checks existing
+  findings against the current code and updates their statuses — this is the
+  CLI's de-stale mechanism.
+- `clawpatch review --since <ref>` reviews only the features changed since
+  `<ref>`, adding findings for new code without a full re-review.
+
+Prefer those over trusting stale statuses *or* wiping. `rm -r .clawpatch` is a
+last resort for genuinely corrupt state, not the freshness tool — it discards
+resume context and costs a full re-review. (There's no `--resume` flag;
+"resume" just means the on-disk state is still there.)
 
 **Smoke-test first** (`review --limit 3`) and treat that as often-sufficient —
 don't reflexively sweep a whole repo; surface the time/cost before you do.
