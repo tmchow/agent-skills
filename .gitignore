@@ -1,0 +1,10 @@
+# OS / editor cruft
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+
+# Node tooling, if any is added later
+node_modules/
+npm-debug.log*
