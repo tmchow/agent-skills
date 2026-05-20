@@ -31,12 +31,10 @@ either is missing.
 ## Install
 
 ```bash
-# npx skills (Vercel)
 npx skills add tmchow/agent-skills --skill clawpatch --global
-
-# gh skills (GitHub CLI, preview)
-gh skill install tmchow/agent-skills clawpatch
 ```
+
+Update later with `npx skills update clawpatch`.
 
 ## Using it
 

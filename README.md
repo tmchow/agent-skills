@@ -8,7 +8,7 @@ GitHub Copilot CLI, and others).
 
 ## Install
 
-### With `npx skills` ([Vercel](https://github.com/vercel-labs/skills))
+Skills install with [`npx skills`](https://github.com/vercel-labs/skills):
 
 ```bash
 # List what's in the repo without installing
@@ -21,11 +21,11 @@ npx skills add tmchow/agent-skills --skill clawpatch --global
 npx skills add tmchow/agent-skills --all
 ```
 
-### With `gh skills` (GitHub CLI, preview)
+Update installed skills by name, or all at once:
 
 ```bash
-gh skill preview tmchow/agent-skills clawpatch   # inspect first
-gh skill install tmchow/agent-skills clawpatch   # install
+npx skills update clawpatch   # one skill, by its installed name
+npx skills update             # everything
 ```
 
 ## Skills
@@ -54,8 +54,7 @@ agent-skills/
     └── README.md
 ```
 
-Installers can pull the whole repo or a single skill by name (`--skill <name>`
-for `npx skills`, or the skill name as the second argument for `gh skill`).
+Pull the whole repo or a single skill with `--skill <name>`.
 
 Adding a skill? See [`AGENTS.md`](AGENTS.md) for the conventions (frontmatter
 rules, the SKILL.md-vs-README split, validation).
