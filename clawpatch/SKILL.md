@@ -10,7 +10,7 @@ description: >-
   Clawpatch or one of its commands. Do NOT use it for generic "review this
   code", "find bugs", or "code review" requests that don't involve Clawpatch —
   those belong to a different tool.
-version: 0.1.0
+version: 0.1.1
 metadata:
   openclaw:
     homepage: https://clawpatch.ai
@@ -24,7 +24,7 @@ metadata:
     envVars:
       - name: CLAWPATCH_PROVIDER
         required: false
-        description: Override the default review/fix provider (codex). One of codex, grok, opencode, pi, acpx, mock.
+        description: Override the default review/fix provider (codex). One of codex, claude, cursor, grok, opencode, pi, acpx, mock.
       - name: CLAWPATCH_MODEL
         required: false
         description: Provider-specific model string (e.g. opencode/big-pickle, anthropic/claude-sonnet-4).
@@ -61,8 +61,8 @@ that yields locatable findings plus optional validated fixes.
 
 Don't use it for: a small diff already under review (a whole-repo review cycle
 is overkill — use a diff-review tool); a bug the user already understands and
-just wants written; or when no provider CLI (`codex`/`grok`/`opencode`/`pi`/
-`acpx`) is installed — `clawpatch doctor` fails fast, so say so and stop.
+just wants written; or when no provider CLI (`codex`/`claude`/`cursor`/`grok`/
+`opencode`/`pi`/`acpx`) is installed — `clawpatch doctor` fails fast, so say so and stop.
 
 ## Setup
 
@@ -82,6 +82,15 @@ tracked file — confirm with the user before editing it.
 
 The pipeline is `init → map → review → report`. `init` and `map` are local and
 cheap; `review` is the expensive step (~30–60s per feature with codex).
+
+For a first whole-repo pass, `clawpatch ci` runs that pipeline in one call and
+writes the same `.clawpatch/` findings the staged steps would — so
+"`ci` → pick a fix path" is a fine default. Drop to the staged commands only
+when you need to **sample before sweeping** a large or paid provider
+(`review --limit 3`, below), **scope to a slice** (`review --since <ref>`), or
+**resume an existing review** as code moves (`revalidate` / `review --since`,
+below). Either way `ci` **stops at findings — it never fixes or opens PRs**;
+fixing stays the paths under "Choose how to fix."
 
 Run `init && map` directly — they're **idempotent and non-destructive**, so an
 existing `.clawpatch/` just gets refreshed (`init` no-ops without `--force`;
@@ -105,8 +114,14 @@ resort for genuinely corrupt state, not the freshness tool — it discards
 resume context and costs a full re-review. (There's no `--resume` flag;
 "resume" just means the on-disk state is still there.)
 
-**Smoke-test first** (`review --limit 3`) and treat that as often-sufficient —
-don't reflexively sweep a whole repo; surface the time/cost before you do.
+On a large or unfamiliar repo, **smoke-test first** (`review --limit 3`) and
+treat that as often-sufficient — surface the time/cost before committing to a
+full sweep (`ci` or `review`).
+
+By default review sees only **committed** code; `--include-dirty` (on `review`,
+`ci`, and `revalidate`) pulls uncommitted worktree changes into scope — reach
+for it to review in-progress work before it's committed. It's a review-scope
+switch, not a `fix` dirty-tree override (Safety).
 
 Read findings from `report --json`. The full flag set is `clawpatch report
 --help`; two non-obvious traps it won't flag for you:
