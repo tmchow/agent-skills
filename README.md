@@ -35,21 +35,13 @@ Notes:
 
 ### OpenClaw
 
-After a skill is published to ClawHub, install it with:
-
-```bash
-openclaw skills install <slug>
-```
-
-Expected slug for this skill is likely:
+Install from ClawHub:
 
 ```bash
 openclaw skills install camofox-cloaked-browser
 ```
 
-Treat that as provisional until the ClawHub upload returns the canonical slug.
-Before merging this PR, update this README and the skill README with the actual
-published slug.
+ClawHub page: https://clawhub.ai/tmchow/camofox-cloaked-browser
 
 ### Vercel Agent Skills / other runtimes
 

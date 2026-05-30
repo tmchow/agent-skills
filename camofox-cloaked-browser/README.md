@@ -33,19 +33,13 @@ Use `/reload-skills` if installing into an already-running session; then load it
 
 ### OpenClaw
 
-After this skill is uploaded to ClawHub, install it with:
-
-```bash
-openclaw skills install <slug>
-```
-
-The expected slug is likely:
+Install from ClawHub:
 
 ```bash
 openclaw skills install camofox-cloaked-browser
 ```
 
-This is provisional until ClawHub returns the canonical slug. Update this README after upload and before merging the PR.
+ClawHub page: https://clawhub.ai/tmchow/camofox-cloaked-browser
 
 ## Default Camofox target
 
