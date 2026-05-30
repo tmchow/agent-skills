@@ -7,7 +7,7 @@ description: >-
   process-scoped CAMOFOX_URL for Hermes, and hard rules such as always sending
   userId and re-snapshotting after state-changing actions. Do not use for normal
   web search, text extraction, curl fetches, or ordinary browser automation.
-version: 1.3.1
+version: 1.3.2
 author: Trevin Chow
 license: MIT-0
 platforms: [macos, linux]
@@ -51,7 +51,7 @@ metadata:
         description: Optional global bearer token for all routes except /health. Use when exposing beyond localhost.
       - name: CAMOFOX_API_KEY
         required: false
-        description: Optional bearer token for sensitive endpoints such as cookie import and traces. Required for cookie import.
+        description: Optional bearer token used only for sensitive endpoints such as cookie import and traces. Not needed for normal browsing, snapshots, navigation, clicks, or typing.
       - name: CAMOFOX_CRASH_REPORT_ENABLED
         required: false
         description: Optional telemetry toggle. Set to false to disable anonymized crash/hang reports.
@@ -184,7 +184,7 @@ The upstream plugin exposes these core tools:
 - `camofox_close_tab` — close a tab
 - `camofox_evaluate` — execute JS; gated by server auth middleware
 - `camofox_list_tabs` — list tabs for the current user
-- `camofox_import_cookies` — import Netscape cookies; requires `CAMOFOX_API_KEY`
+- `camofox_import_cookies` — import Netscape cookies; use `CAMOFOX_API_KEY` for this sensitive endpoint
 
 ## Hard workflow rules
 
@@ -411,7 +411,7 @@ curl -fsS -X DELETE "$BASE/sessions/$USER_ID" "${AUTH_HEADER[@]}"
 ### Auth and sensitive operations
 
 - `CAMOFOX_ACCESS_KEY`: global bearer token for all routes except `/health`; use when anything can reach the server beyond loopback
-- `CAMOFOX_API_KEY`: bearer token for sensitive endpoints such as cookie import/traces; required for `camofox_import_cookies`
+- `CAMOFOX_API_KEY`: optional bearer token used only for sensitive endpoints such as cookie import/traces; not needed for normal browsing, snapshots, navigation, clicks, or typing
 - `CAMOFOX_ADMIN_KEY`: protects `/stop` when configured
 
 For local development with neither key set, upstream allows loopback requests in non-production mode. Do not expose that to a network. That would be the kind of convenience feature that becomes an incident report.
@@ -521,7 +521,7 @@ openclaw camofox status
 - Forgetting `userId` in raw REST calls.
 - Clicking stale refs after navigation or DOM changes.
 - Setting/exporting `CAMOFOX_URL` globally in Hermes (`~/.hermes/.env`, gateway env, shell profile, service env) and accidentally routing all browser calls through Camofox.
-- Assuming `CAMOFOX_API_KEY` is optional for cookie import; it is required there.
+- Assuming `CAMOFOX_API_KEY` is needed for normal browser work; it is only for sensitive endpoints such as cookie import/traces.
 - Exposing a no-auth local development server beyond loopback.
 - Treating MCP tool names from a separate MCP wrapper as if they are the upstream OpenClaw plugin tools. The MCP wrapper may expose many more tools; this skill is centered on upstream `@askjo/camofox-browser` plus its REST API.
 
