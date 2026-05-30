@@ -7,13 +7,14 @@ description: >-
   process-scoped CAMOFOX_URL for Hermes, and hard rules such as always sending
   userId and re-snapshotting after state-changing actions. Do not use for normal
   web search, text extraction, curl fetches, or ordinary browser automation.
-version: 1.3.3
+version: 1.3.4
 author: Trevin Chow
 license: MIT-0
 platforms: [macos, linux]
 metadata:
   hermes:
     tags: [browser, camofox, camoufox, cloaking, anti-detection, npm, openclaw]
+    category: browser
     related_skills: [hermes-agent]
     config:
       - key: camofox.base_url
