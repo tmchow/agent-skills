@@ -10,7 +10,7 @@ description: >-
   Clawpatch or one of its commands. Do NOT use it for generic "review this
   code", "find bugs", or "code review" requests that don't involve Clawpatch —
   those belong to a different tool.
-version: 0.1.1
+version: 0.1.2
 metadata:
   openclaw:
     homepage: https://clawpatch.ai
@@ -94,7 +94,9 @@ fixing stays the paths under "Choose how to fix."
 
 Run `init && map` directly — they're **idempotent and non-destructive**, so an
 existing `.clawpatch/` just gets refreshed (`init` no-ops without `--force`;
-`map` re-classifies). No scan, no `--force`.
+`map` re-classifies). No scan, no `--force`. `map` writes one JSON file per
+**feature** — the subsystem-sized unit (a package, a command, a service) that
+both review and scoping operate on — into `.clawpatch/features/`.
 
 State persists in `.clawpatch/` and there's no natural point where the agent
 deletes it, so findings — and their `fixed`/`wont-fix`/`uncertain` statuses —
@@ -122,6 +124,33 @@ By default review sees only **committed** code; `--include-dirty` (on `review`,
 `ci`, and `revalidate`) pulls uncommitted worktree changes into scope — reach
 for it to review in-progress work before it's committed. It's a review-scope
 switch, not a `fix` dirty-tree override (Safety).
+
+### Scoping the review
+
+The switches above scope *which code* review sees; this scopes *which features*
+it spends on. `review` has no path filter — you scope it by **selecting
+features**. Each `.clawpatch/features/*.json` carries an opaque `featureId` (a
+hash like `feat_library_…`, **not** a `1..N` index — passing a number silently
+matches nothing and the run reviews zero features) plus its `title` and
+`ownedFiles[].path`. `--feature` takes a **single** id — it is **not**
+repeatable (a second `--feature` overrides the first; a comma-list matches
+nothing and reviews zero), so to cover several features you loop the `review`
+call one id per run; each writes into the shared `.clawpatch/`. To review only
+what the user named ("just the Go code", "only the auth package", "ignore the
+docs"), translate paths → ids yourself, then loop:
+
+```
+for f in .clawpatch/features/*.json; do
+  jq -r '[.featureId,.title,((.ownedFiles//[])|map(.path)|join(","))]|@tsv' "$f"
+done                                                  # read the table, pick the ids, then:
+for id in <id1> <id2> …; do clawpatch review --feature "$id"; done   # confirm flags in `review --help`
+```
+
+`--limit <n>` is the *cheapness* knob (first N features in map order) — right
+for a smoke test, useless for targeting an area; reach for `--feature` when the
+user names a subsystem. All Clawpatch state (features, findings, reports) is
+plain JSON under `.clawpatch/`, so read it directly when a `--json` payload is
+too large to scan or a wrapper truncates it.
 
 Read findings from `report --json`. The full flag set is `clawpatch report
 --help`; two non-obvious traps it won't flag for you:
