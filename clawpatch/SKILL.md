@@ -212,9 +212,10 @@ validation failure (exit 6 → `git restore .`), an oversized diff, or repeated
 
 ## Safety & pitfalls
 
-- **Never `--force` `fix`/`open-pr`, and never `clawpatch land`, without
-  explicit user approval** — `--force` overrides the dirty-tree/validation
-  guards; `land` merges the PR.
+- **Never `--force` `fix`/`open-pr` without explicit user approval** —
+  `--force` overrides the dirty-tree/validation guards. Clawpatch does **not**
+  merge/land PRs today (there's no `land` command); if a merge/land command
+  ever appears, treat it the same way — never run it without approval.
 - **Never combine subagents with `clawpatch fix`.** Sharing `.clawpatch/`
   across subagents risks patches landing in the wrong worktree (evidence
   paths resolve against the original `rootPath`); copying state per subagent
