@@ -56,6 +56,7 @@ OpenClaw instructions.
 | ----- | ------------ |
 | [`camofox-cloaked-browser`](camofox-cloaked-browser/) | Use [Camofox/Camoufox](https://github.com/jo-inc/camofox-browser) selectively for cloaked browser automation — npm/npx startup, OpenClaw plugin tools, raw REST commands, session/tab workflow, environment variables, process-scoped Hermes `CAMOFOX_URL`, and snapshot-after-action discipline. |
 | [`clawpatch`](clawpatch/) | Drive the [Clawpatch](https://clawpatch.ai) CLI for automated AI code review and per-finding fixes — scanner-only subagent dispatch (parallel) or full-cycle `clawpatch fix` loops, with wire-format JSON parsing, mode selection, and exit-code/pitfall handling. |
+| [`blip`](blip/) | Generate original risograph-style editorial illustrations for articles and blogs, starring **Blip** — a recurring screen-faced robot mascot. One-metaphor-per-image scenes with named + blog-matched palette presets, a derive-a-palette-from-one-color system, and reference-image character consistency. Calls OpenRouter's image API directly (model-selectable: Nano Banana 2/Pro, GPT-5.4 Image 2, MiniMax M3, …). |
 
 ## Layout
 
