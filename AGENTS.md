@@ -93,6 +93,15 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 procedure from `SKILL.md` — that duplicates the agent doc and drifts. Keep the
 README to slow-changing metadata (purpose, prerequisites, install).
 
+## License guidance
+
+Default new skills to `license: MIT` in frontmatter because the repository root
+license is MIT. Use `MIT-0` or another per-skill license only when there is a
+clear reason, such as intentionally removing attribution requirements, matching
+an upstream asset/license constraint, or documenting a third-party-derived work
+that cannot honestly be represented as MIT. If using a non-default license,
+state the reason in the PR body and keep any required notices with the skill.
+
 ## Validate before committing
 
 - Frontmatter parses as valid YAML.
