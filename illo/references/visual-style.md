@@ -43,10 +43,11 @@ is crisp, the image fails. Redraw everything in the mascot's line.
 
 ## Color grammar (constant across every palette)
 
-- **Structure ink** (the darker ink): all linework, forms, the mascot's screen,
-  and label text.
+- **Structure ink** (the darker ink): all linework, forms, the mascot's dark
+  features, and label text.
 - **Accent ink** (the brighter ink): the live, attention-pulling color — the
-  antenna tip and the one or two things that most matter in the scene. Sparing.
+  character's accent part and the one or two things that most matter in the
+  scene. Sparing.
 - Optional **secondary accent**: one extra hue, only when an idea genuinely has
   two parts worth separating, and only in the richer palettes. Keep it subordinate.
 

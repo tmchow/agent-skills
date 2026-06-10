@@ -1,25 +1,26 @@
 # Composition
 
-One picture, one idea — turned into a single physical thing Blip is caught
-doing, in a small slightly-wrong machine-world, with quiet space around it.
+One picture, one idea — turned into a single physical thing the mascot is
+caught doing, in a small slightly-wrong machine-world, with quiet space around
+it.
 
 ## Turn the idea into a move
 
 Start from the one sentence the picture has to land, then find the **physical
-move** that embodies it — something Blip can be mid-action on. Push the abstract
-into the concrete: "we ship too slowly" → Blip cranking a press that drips a
-single parcel; "we're buried in inputs" → Blip bailing a bucket that keeps
-overflowing. The move *is* the picture; if you can't name the move, you don't
-have the image yet.
+move** that embodies it — something the mascot can be mid-action on. Push the
+abstract into the concrete: "we ship too slowly" → the mascot cranking a press
+that drips a single parcel; "we're buried in inputs" → the mascot bailing a
+bucket that keeps overflowing. The move *is* the picture; if you can't name
+the move, you don't have the image yet.
 
 Give the move a **built thing to happen on or in** — a low-tech, faintly-broken
 machine, container, or rig that the move implies. Invent it for this idea rather
 than pulling from a stock set, and keep it to one or two objects, never a
 cluttered bench.
 
-Then put **Blip in the move** — wedged in it, cranking it, plugging it, hauling
-across it — never posed politely beside it (see the load-bearing test in
-`character.md`).
+Then put **the mascot in the move** — wedged in it, cranking it, plugging it,
+hauling across it — never posed politely beside it (see the load-bearing test
+in `character.md`).
 
 ## Stagings that tend to land
 
@@ -29,12 +30,12 @@ the image:
 - **A contraption** — one absurd machine that performs the idea: small input, one output.
 - **A change** — the same scene in two states (jumbled → settled, by-hand → automatic).
 - **A throughput** — something travels left-to-right and is transformed on the way.
-- **A snag** — the whole thing jams at a single point, and Blip is usually the jam.
+- **A snag** — the whole thing jams at a single point, and the mascot is usually the jam.
 - **A build-up / drain** — it stacks, fills, leaks, or empties over time.
-- **A crossing** — a gap, gate, ramp, or threshold Blip moves something over.
+- **A crossing** — a gap, gate, ramp, or threshold the mascot moves something over.
 - **A mini-comic** — 2–4 small panels inside ONE image, read left to right, one
-  action per panel; Blip and the key object carry through every panel so it
-  reads as the same moment advancing (stuck → small slice → shipped).
+  action per panel; the mascot and the key object carry through every panel so
+  it reads as the same moment advancing (stuck → small slice → shipped).
 
 Blend sparingly; one clear staging beats two muddled ones. Across a set, vary
 the stagings — two adjacent images shouldn't lean on the same staging or
@@ -51,9 +52,9 @@ When an idea moves through stages, pick by where the sequence lives:
 - **Social destination** → prefer the mini-comic: one self-contained image that
   carries the whole sequence beats a multi-image thread.
 
-Panel rules: 2–4 panels, never more; one action per panel; same Blip, same key
-object, same palette in every panel; clear gutters or thin panel borders; at
-most one short label per panel.
+Panel rules: 2–4 panels, never more; one action per panel; same mascot, same
+key object, same palette in every panel; clear gutters or thin panel borders;
+at most one short label per panel.
 
 ## Restraint
 
@@ -77,7 +78,7 @@ with no load-bearing moment gets no image. Per image:
 - **Placement** — after which section or idea
 - **Idea** — the one sentence it lands
 - **Staging** — which angle above
-- **Blip's move** — the physical action
+- **The mascot's move** — the physical action
 - **Object(s)** — the one or two built things
 - **Palette** — preset name or derived dominant
 - **Labels** — the 1–3 short strings

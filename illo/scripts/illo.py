@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Blip — risograph illustration engine + setup. OpenRouter, stdlib only.
+"""Illo — editorial illustration engine + setup. OpenRouter, stdlib only.
 
 Subcommands:
   generate   Render image(s) from a prompt (+ refs); prints a JSON line per image
              and appends to <out-dir>/manifest.jsonl. --count N for variations.
-  newrun     Make + print a fresh batch dir: $BLIP_TMP (or /tmp/blip) / <runid>.
+  newrun     Make + print a fresh batch dir: $ILLO_TMP (or /tmp/illo) / <runid>.
   gallery    Build a self-contained index.html from a run dir's manifest.jsonl.
   init       Create/update the user config (run by the user; prompts for the key).
   doctor     Preflight: report whether the skill is ready to generate.
@@ -15,7 +15,7 @@ Resolution (generate):
   aspect  : --aspect   >  config "aspect"
 
 The config file is an OPTIONAL user-level YAML file at
-${XDG_CONFIG_HOME:-~/.config}/blip/config.yaml — never commit it. Reading it
+${XDG_CONFIG_HOME:-~/.config}/illo/config.yaml — never commit it. Reading it
 needs PyYAML; if PyYAML is absent the file is ignored (with a note) and the tool
 still runs from the env var + flags, so generation stays install-free. The API
 key is read from the file only as a fallback; the env var is preferred. The
@@ -32,9 +32,13 @@ DEFAULT_MODEL = "x-ai/grok-imagine-image-quality"
 PROG = pathlib.Path(__file__).name
 
 
-def config_path():
+def config_dir():
     base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
-    return pathlib.Path(base) / "blip" / "config.yaml"
+    return pathlib.Path(base) / "illo"
+
+
+def config_path():
+    return config_dir() / "config.yaml"
 
 
 def load_config():
@@ -63,7 +67,7 @@ def dump_config_yaml(cfg):
         s = str(v)
         return f'"{s}"' if (not s or s[0] in "@#&*!|>%`\"'" or ":" in s) else s
     out = [
-        "# ~/.config/blip/config.yaml — Blip settings. All keys optional.",
+        "# ~/.config/illo/config.yaml — Illo settings. All keys optional.",
         "# The API key is best left to the OPENROUTER_API_KEY env var.",
         "",
         f"apiKey: {val(cfg['apiKey'])}" if cfg.get("apiKey")
@@ -71,7 +75,9 @@ def dump_config_yaml(cfg):
         f"model: {val(cfg['model'])}" if cfg.get("model")
         else f"# model: {DEFAULT_MODEL}   # any OpenRouter image model id",
         f"defaultPalette: {val(cfg['defaultPalette'])}" if cfg.get("defaultPalette")
-        else "# defaultPalette: notes      # default: ink-punch",
+        else "# defaultPalette: signal     # preset or custom palette name; default: ink-punch",
+        f"defaultCharacter: {val(cfg['defaultCharacter'])}" if cfg.get("defaultCharacter")
+        else "# defaultCharacter: my-bot    # a pack in characters/<name>/; default: the shipped character",
         f"aspect: {val(cfg['aspect'])}" if cfg.get("aspect")
         else "# aspect: 16:9               # default aspect ratio",
         "",
@@ -169,7 +175,7 @@ def fetch_cost(gen_id, key, tries=3, delay=1.5):
 
 
 def run_base():
-    return pathlib.Path(os.environ.get("BLIP_TMP") or "/tmp/blip")
+    return pathlib.Path(os.environ.get("ILLO_TMP") or "/tmp/illo")
 
 
 def do_generate(model, content, key, out_path, want_cost):
@@ -223,7 +229,7 @@ def cmd_generate(args):
     n = max(1, args.count)
     paths = [out] if n == 1 else [out.with_name(f"{out.stem}-{k + 1}{out.suffix}") for k in range(n)]
     manifest = out.parent / "manifest.jsonl"  # parent dir is created by do_generate
-    # One render per output path; each self-records to manifest.jsonl and prints a JSON line.
+    # Serial renders: a partial batch still leaves a valid manifest behind.
     for p in paths:
         rec = do_generate(model, content, key, p, args.cost)
         rec["label"] = args.label or ""
@@ -247,6 +253,8 @@ def cmd_init(args):
         cfg["model"] = args.model
     if args.palette:
         cfg["defaultPalette"] = args.palette
+    if args.character:
+        cfg["defaultCharacter"] = args.character
     if args.aspect:
         cfg["aspect"] = args.aspect
     for pair in args.watermark:
@@ -267,10 +275,17 @@ def cmd_init(args):
           f"model: {cfg.get('model', DEFAULT_MODEL)})")
 
 
+def character_packs(cdir):
+    """{name: pack-dir} for each characters/<name>/ holding a character.md."""
+    return {d.name: d for d in sorted((cdir / "characters").glob("*"))
+            if (d / "character.md").is_file()}
+
+
 def cmd_doctor(args):
     """Preflight. Reports readiness without revealing the key; exits non-zero if not ready."""
     cfg = load_config()
-    p = config_path()
+    cdir = config_dir()
+    p = cdir / "config.yaml"
     key_src = ("env" if os.environ.get("OPENROUTER_API_KEY")
                else "config" if cfg.get("apiKey") else None)
     lines = [
@@ -284,6 +299,19 @@ def cmd_doctor(args):
         lines.append(f"aspect:  {cfg['aspect']} (default)")
     if cfg.get("watermark"):
         lines.append(f"watermark: {', '.join(sorted(cfg['watermark']))} (configured)")
+    packs = character_packs(cdir)
+    if packs:
+        notes = [n + ("" if (d / "reference.png").is_file() else " (reference.png MISSING)")
+                 for n, d in packs.items()]
+        lines.append(f"characters: {', '.join(notes)} (packs in {cdir / 'characters'})")
+    default_char = cfg.get("defaultCharacter")
+    if default_char:
+        status = "" if default_char in packs else " — no such pack"
+        lines.append(f"character: {default_char} (config default{status})")
+    else:
+        lines.append("character: shipped default")
+    if (cdir / "palettes.md").exists():
+        lines.append(f"palettes: custom file ({cdir / 'palettes.md'})")
     if key_src:
         lines.append(f"api key: found ({key_src})")
     else:
@@ -293,7 +321,7 @@ def cmd_doctor(args):
 
 
 def cmd_newrun(args):
-    """Make + print a fresh run dir for a batch: $BLIP_TMP (or /tmp/blip) / <runid>."""
+    """Make + print a fresh run dir for a batch: $ILLO_TMP (or /tmp/illo) / <runid>."""
     rid = time.strftime("%Y%m%d-%H%M%S") + "-" + os.urandom(2).hex()
     d = run_base() / rid
     d.mkdir(parents=True, exist_ok=True)
@@ -340,8 +368,8 @@ def build_gallery_html(recs, embed, base):
             f'<p class="meta">{meta}</p>{prompt}</figcaption></figure>')
     return (f"<!doctype html><html lang=en><head><meta charset=utf-8>"
             f'<meta name=viewport content="width=device-width,initial-scale=1">'
-            f"<title>Blip gallery</title><style>{GALLERY_CSS}</style></head>"
-            f'<body><h1>Blip gallery <span class="tot">{len(recs)} images'
+            f"<title>Illo gallery</title><style>{GALLERY_CSS}</style></head>"
+            f'<body><h1>Illo gallery <span class="tot">{len(recs)} images'
             f" · ${total:.4f}</span></h1>"
             f'<div class="grid">{"".join(cards)}</div></body></html>')
 
@@ -367,7 +395,7 @@ def cmd_gallery(args):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Blip risograph illustration engine.")
+    ap = argparse.ArgumentParser(description="Illo editorial illustration engine.")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     g = sub.add_parser("generate", help="render one illustration")
@@ -386,6 +414,7 @@ def main():
     i = sub.add_parser("init", help="create/update user config (run this yourself)")
     i.add_argument("--model", help="default model id")
     i.add_argument("--palette", help="default palette preset name")
+    i.add_argument("--character", help="default character pack name (characters/<name>/)")
     i.add_argument("--aspect", help="default aspect ratio")
     i.add_argument("--watermark", action="append", default=[], metavar="DEST=TEXT",
                    help="default watermark text per destination, e.g. blog=yoursite.com (repeatable)")
@@ -396,7 +425,7 @@ def main():
     d = sub.add_parser("doctor", help="preflight readiness check")
     d.set_defaults(func=cmd_doctor)
 
-    nr = sub.add_parser("newrun", help="make + print a fresh batch dir (/tmp/blip/<runid>)")
+    nr = sub.add_parser("newrun", help="make + print a fresh batch dir (/tmp/illo/<runid>)")
     nr.set_defaults(func=cmd_newrun)
 
     gl = sub.add_parser("gallery", help="build a self-contained index.html from a run dir's manifest")

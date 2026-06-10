@@ -8,9 +8,10 @@ values to put in the prompt.
 
 ## Default resolution (first match wins)
 
-1. **Explicit request** — "use ink-punch", "Notes palette", "make it emerald", a brand hex.
+1. **Explicit request** — "use ink-punch", a custom palette by name, "make it emerald", a brand hex.
 2. **Destination cue** — a blog / Substack / personal-site context, or a pasted
-   article from one → the matching blog preset (`notes`).
+   article from one → the user's custom palette tagged for that destination
+   (below), if any.
 3. **Config default** — `defaultPalette` from the user config, if set.
 4. **House default** — `ink-punch`.
 
@@ -23,20 +24,24 @@ values to put in the prompt.
 | `signal` | cream `#fbf7ee` | navy `#1b2a6b` | fluoro orange `#ff6a1a` | dark OK | complementary, confident/pro |
 | `full-grammar` | cream `#fbf7ee` | near-black `#111111` | red `#e5342b` + blue `#2b6cff` | dark OK | richest semantic range; keep restrained |
 | `mono-heat` | cream `#fbf7ee` | charcoal `#363737` | single orange `#ff6a1a` | light | minimal; one ink |
-| **`notes`** (blog) | `#fffbeb` | warm charcoal `#363737` | warm orange `#ea580c` | **light** | warm cream blog palette; sits on Substack-style themes |
-| `notes-mono` (blog variant) | `#fffbeb` | warm charcoal `#363737` | orange-forward `#ea580c` fills | **light** | quietest in an article |
-| `notes-earth` (blog variant) | `#fffbeb` | warm charcoal `#363737` | gold `#9b7e00` + orange `#ea580c` | **light** | richest/warmest; good for hero images |
 
 Mascot body value follows the palette — see `character.md` (light palettes →
-light body + non-black screen).
+light body + structure-ink features).
 
-### The `notes` family is the legacy-compat layer
+## Custom palettes (site- and brand-matched)
 
-`notes` is defined from the blog's live theme tokens (paper `#fffbeb`, accent
-`#ea580c`, text `#363737`). New art generated in `notes` sits next to existing
-posts without a hard visual break — and as old images get redone, everything
-converges on the same palette. If the blog rebrands, re-extract its tokens and
-update this table; nothing else changes.
+Users keep their own palettes in
+`${XDG_CONFIG_HOME:-~/.config}/illo/palettes.md` (the `doctor` subcommand
+reports whether the file exists). Same table schema as the presets, plus an
+optional "Destination cues:" line mapping cues (blog, x, deck, …) to palette
+names. When the file exists, its names join the preset namespace and its
+destination cues drive resolution step 2.
+
+The highest-value custom palette is a **site-matched** one: eyedrop or read
+the site's live theme tokens (background → paper, text → structure ink, link/
+brand color → accent), record them as a named palette, and new art sits next
+to existing content without a hard visual break. If the site rebrands,
+re-extract the tokens; nothing else changes.
 
 ## Derive a palette from one dominant color
 
@@ -66,7 +71,7 @@ emerald", a hex), derive the rest by rule instead of picking a preset.
 - Accent never becomes label-text background if its contrast is low (labels are
   structure-ink on bare paper — see `quality-bar.md`).
 - The two inks must be clearly distinct in hue and value.
-- Light paper → light mascot body + structure-ink screen (`character.md`).
+- Light paper → light mascot body + structure-ink features (`character.md`).
 
 ### Worked examples (complement mode)
 
