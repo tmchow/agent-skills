@@ -75,6 +75,31 @@ quoted in a skill: confirm it against the tool's `--help`, don't guess.
 - When a reference is mandatory before acting, gate it explicitly in the body
   (a capsule summary + a "read `references/X.md` in full before …" stop).
 
+## CLI-wrapper skills
+
+For skills that wrap an external CLI/API tool, `SKILL.md` is not the man page.
+Use it for agent operating judgment that live `--help` will not provide:
+
+- when to choose the tool and when not to
+- the mental model needed to avoid misuse
+- install/verify commands
+- a small set of canonical examples, not an exhaustive command list
+- failure handling and verification discipline
+- privacy, security, and side-effect boundaries
+
+Avoid full command tables, flag catalogs, exit-code catalogs, or examples likely
+to drift. Stable, high-value commands and flags *do* belong in the skill when
+they are key functionality or encode best-practice scenarios the agent would
+otherwise miss. Favor scenario-shaped guidance over exhaustive reference docs:
+"For X situation, run/consider Y, then verify Z." Tell agents to run the live
+tool help (`<tool> --help`, subcommand help, or upstream docs) for exact syntax
+around anything uncommon or version-sensitive. If quoting syntax anyway, verify
+it against current help during the PR.
+
+Use placeholders that agents cannot accidentally copy as stale literals. For
+example, prefer `@<uid>` plus "copy refs exactly as printed" over fake browser
+refs that look real but may be invalid.
+
 ## Per-skill README.md
 
 The human-facing landing page. GitHub renders it when someone browses the
