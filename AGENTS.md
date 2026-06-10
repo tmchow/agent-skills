@@ -82,7 +82,8 @@ Use it for agent operating judgment that live `--help` will not provide:
 
 - when to choose the tool and when not to
 - the mental model needed to avoid misuse
-- install/verify commands
+- where the actual underlying tool is installed from, including package name and source repo when relevant
+- install/verify commands for the underlying tool
 - a small set of canonical examples, not an exhaustive command list
 - failure handling and verification discipline
 - privacy, security, and side-effect boundaries
