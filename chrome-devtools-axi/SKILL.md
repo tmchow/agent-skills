@@ -85,7 +85,11 @@ snapshot-generation counter.
 
 ## Setup and verification
 
-Prefer `npx` for one-off use:
+The skill only teaches the agent how to use the tool. The actual CLI is the npm
+package `chrome-devtools-axi`; source repo:
+https://github.com/kunchenguid/chrome-devtools-axi
+
+Prefer `npx` for one-off use so the CLI is installed on demand:
 
 ```bash
 npx -y chrome-devtools-axi --help
