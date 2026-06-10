@@ -10,7 +10,7 @@ description: >-
   or non-Chrome browser targets.
 version: 0.1.0
 author: Trevin Chow
-license: MIT-0
+license: MIT
 platforms: [macos, linux, windows]
 metadata:
   hermes:
