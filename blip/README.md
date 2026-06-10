@@ -76,22 +76,30 @@ openclaw skills install blip
 > ClawHub slug is provisional until first publish — update this line and the
 > root catalog once the skill is published.
 
-## What it does
+## Use it for
 
-- Reads an article (or a bare concept — asking a couple of quick questions first
-  when that helps) and finds the few moments worth illustrating, then writes a
-  **shot list** on request.
-- Generates **one-idea-per-image** riso scenes (16:9 by default; also square and
-  vertical) with Blip performing the action.
-- **Palettes**: named presets (a bold house look, plus blog-matched warm
-  presets), or **derive a full palette from a single dominant color** with
-  built-in color-grammar and contrast guardrails.
-- Keeps the character consistent via a **reference lock**, and self-checks each
-  image against a quality bar (accent restraint, label contrast, no stray
-  titles, fresh metaphor).
-- **Batch & compare**: render variations, or run one prompt across multiple
-  models, then assemble a **self-contained comparison gallery** showing each
-  image's model, cost, and prompt (outputs land in `/tmp/blip/<runid>/`).
+- **Article illustrations** — paste a post or doc; it finds the few
+  load-bearing moments (never one image per paragraph), proposes a shot list,
+  and produces a set you can interleave through the piece.
+- **A single concept** — "illustrate *you are the bottleneck*" → one deadpan
+  scene that lands one takeaway. If the idea is thin, it asks a couple of quick
+  questions first instead of guessing.
+- **Mini-comics** — a process, a before→after, a fail→fix told in 2–4 panels
+  inside one image. The best shape when a sequence belongs together — and for
+  social, where one self-contained image beats a thread.
+- **Blog / brand-matched art** — warm blog presets that blend into your site,
+  or hand it one brand color and it derives a full palette around it.
+- **Social-ready art** — bold house palette, square or wide, with your handle
+  hand-lettered in as an optional watermark (from your config; never a built-in
+  default).
+- **Choosing between options** — render variations or run the same prompt
+  across multiple models, then get a **self-contained comparison gallery**
+  showing each image's model, cost, and prompt.
+
+Throughout, Blip stays on-model via a **reference lock**, every image is
+self-checked against a quality bar (one idea per image, accent restraint, no
+stray titles, fresh metaphor every time), and aspect ratios cover article
+(16:9), social (1:1), and vertical formats.
 
 ## Notes
 

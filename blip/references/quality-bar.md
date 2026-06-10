@@ -18,6 +18,8 @@ Check every generated image before delivering. Re-roll or edit on any failure.
   background are not colored-in with the accent.
 - Unified line language across mascot and props (one artist).
 - A fresh metaphor — not a copy of an `assets/examples/` composition.
+- **Mini-comics**: 2–4 panels, one action per panel, the same Blip and key
+  object in every panel, clear left-to-right reading, ≤1 short label per panel.
 
 ## Fail signals → fix
 

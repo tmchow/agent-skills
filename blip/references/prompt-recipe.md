@@ -22,6 +22,15 @@ PALETTE: paper {paper hex}. Structure ink {structure hex} for all linework, form
 LABELS: exactly {1–3} short hand-lettered English labels — {"label one", "label two"} — in the structure-ink color placed directly on the bare paper. Never put label text on a colored fill. No title bar, no type label, no logo.
 ```
 
+## Mini-comic variant
+
+When the staging is a mini-comic, replace the Composition line with one that
+spells out each panel — the model needs the panel structure stated explicitly:
+
+```text
+Composition (mini-comic, {2–4} panels in ONE image, read left to right, separated by clear gutters or thin hand-drawn panel borders): Panel 1 — {Blip's action}. Panel 2 — {the same Blip and the same key object, one step further}. Panel 3 — {the payoff}. The SAME Blip and the SAME key object appear in every panel, identical design and palette, so it reads as one moment advancing. One action per panel; at most one short label per panel.
+```
+
 ## Notes that keep it on-style
 
 - One idea, one structure. Never combine images.

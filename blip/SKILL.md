@@ -4,16 +4,17 @@ description: >-
   Use this skill to create original editorial illustrations for articles, blog
   posts, newsletters, or docs in Blip's distinctive risograph print style with a
   recurring screen-faced robot mascot (Blip). Triggers: "illustrate this post",
-  "make article images", "riso illustration", "Blip illustration", "shot list
-  for my blog", "cover image for this piece", "draw this concept in our style",
-  or generating, refining, recoloring, or planning these images. Turns a concept
-  or article into one-metaphor-per-image hand-drawn riso scenes (16:9 and other
-  ratios), with named palette presets and a derive-a-palette-from-one-color
-  system, and keeps the mascot on-model via a reference lock. Do NOT use for
+  "make article images", "riso illustration", "Blip illustration", "mini-comic",
+  "shot list for my blog", "cover image for this piece", "draw this concept in
+  our style", or generating, refining, recoloring, comparing, or planning these
+  images. Turns an article into an interleaved set of one-idea-per-image riso
+  scenes, and a concept into a single image or a 2–4 panel mini-comic; supports
+  named + derived palettes, model choice, variation/model-comparison galleries,
+  and a reference lock that keeps the mascot on-model. Do NOT use for
   photorealistic images, logos, app/UI mockups, generic stock art, charts, or
   plain text-to-image requests that do not want this specific riso + mascot
   house style.
-version: 0.1.0
+version: 0.2.0
 author: Trevin Chow
 license: MIT
 platforms: [macos, linux]
@@ -41,13 +42,28 @@ metadata:
 Make original, distinctive editorial illustrations for written content. One
 image explains one idea: a key judgment, a flow, a before/after, a trap, a
 loop. **Blip** — a recurring screen-faced robot mascot — is the one performing
-the idea in every scene; the subject, never decoration.
+the idea in every scene; the subject, never decoration. When one idea advances
+through stages, it can be a **mini-comic**: 2–4 panels inside a single image.
 
 This is a specific house style, not a generic image generator. The look is a
 **risograph print**: grainy halftone, slight ink-layer offset, faint paper
 grain, flat fills, and one bold, even-weight, softly-rounded outline on
 everything. It is intentionally not a photo, not a logo, not a corporate
-infographic, not a flowchart, not a UI mockup.
+infographic, not a flowchart, not a UI mockup. The technique and character are
+the constants; the **palette is a parameter** (presets, or derived from one
+color), so the same style can match a blog, a brand, or a mood.
+
+## Use cases — route the request
+
+| The user wants | The path |
+|---|---|
+| **Illustrate an article / post / newsletter** | Steps 1–6: pull the load-bearing moments, shot list, one image per anchor, interleave by placement. Blog destination → `notes` palette. |
+| **One image for a single concept** | Step 1 concept branch (up to ~3 quick questions if the idea is thin), then a single image. |
+| **A sequence — process, before→after, fail→fix** | One **mini-comic** when the progression sits in one place (routing in `references/composition.md`). Best shape for social. |
+| **Social-ready art** | 16:9 (or 1:1), bold `ink-punch`, watermark with the `x` handle if configured or asked. |
+| **Blog / brand / site-matched art** | A named preset, or derive the palette from one dominant color (`references/palettes.md`). |
+| **Options to pick from, or "which model is best"** | Step 4b: `--count` variations or a model loop → `gallery` with a recommendation. |
+| **Fix an existing image** (stray title, recolor, Blip too decorative) | Edit prompts in `references/prompt-recipe.md`, passing the image back as `--ref`. |
 
 ## Prerequisites
 
@@ -118,7 +134,9 @@ Two kinds of input, handled differently:
   ones that change the output — then build.** Draw from:
   - the single takeaway (what should the reader conclude?),
   - where it's headed (blog / X / deck → sets palette, aspect, watermark),
-  - how many images, or any must-include element or constraint.
+  - the shape: one image, a **mini-comic** (2–4 panels in one image — right
+    when the idea advances through stages, and best for social), or several
+    separate images — plus any must-include element or constraint.
 
   Keep it to **one short round**, then proceed. **Skip the questions entirely**
   if the user already gave enough, said "just make it" / "single shot" /
@@ -130,8 +148,10 @@ Two kinds of input, handled differently:
 If the user wants planning ("where should this be illustrated", "shot list"),
 output a shot list before generating. Per image: placement, the one idea,
 the staging, **what Blip is doing**, the palette, and the 1–3 short English
-labels. Default 3–6 images for an article; 1–2 for short pieces.
-Follow `references/composition.md`.
+labels. Let the anchor count drive how many (bands and the never-pad rule are
+in `references/composition.md`). When a stretch of the piece advances through
+stages **in one place**, plan a single mini-comic image there instead of
+several — the mini-comic-vs-separate routing is in `references/composition.md`.
 
 ### 3. Resolve the palette
 

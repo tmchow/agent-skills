@@ -32,8 +32,28 @@ the image:
 - **A snag** — the whole thing jams at a single point, and Blip is usually the jam.
 - **A build-up / drain** — it stacks, fills, leaks, or empties over time.
 - **A crossing** — a gap, gate, ramp, or threshold Blip moves something over.
+- **A mini-comic** — 2–4 small panels inside ONE image, read left to right, one
+  action per panel; Blip and the key object carry through every panel so it
+  reads as the same moment advancing (stuck → small slice → shipped).
 
-Blend sparingly; one clear staging beats two muddled ones.
+Blend sparingly; one clear staging beats two muddled ones. Across a set, vary
+the stagings — two adjacent images shouldn't lean on the same staging or
+metaphor family.
+
+## Mini-comic vs. separate images (routing)
+
+When an idea moves through stages, pick by where the sequence lives:
+
+- The progression sits **in one place** — a process, a before→during→after, a
+  fail→fix inside one section or one concept → **one mini-comic image**.
+- The ideas are **spread across the piece** → **separate interleaved images**,
+  one per anchor.
+- **Social destination** → prefer the mini-comic: one self-contained image that
+  carries the whole sequence beats a multi-image thread.
+
+Panel rules: 2–4 panels, never more; one action per panel; same Blip, same key
+object, same palette in every panel; clear gutters or thin panel borders; at
+most one short label per panel.
 
 ## Restraint
 
@@ -50,7 +70,9 @@ thing. The aim is one fresh, memorable, slightly-absurd picture per idea.
 
 ## Shot list (planning requests)
 
-Default 3–6 images per article, 1–2 for short pieces. Per image:
+Let the count fall out of the anchors actually found — typically 3–6 per
+article, 1–2 for short pieces — and **never pad to hit a number**: a section
+with no load-bearing moment gets no image. Per image:
 
 - **Placement** — after which section or idea
 - **Idea** — the one sentence it lands
