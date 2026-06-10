@@ -14,14 +14,14 @@ description: >-
   photorealistic images, logos, app/UI mockups, generic stock art, charts, or
   plain text-to-image requests that do not want this specific riso + mascot
   house style.
-version: 0.2.0
+version: 0.2.1
 author: Trevin Chow
 license: MIT
 platforms: [macos, linux]
 metadata:
   hermes:
     tags: [illustration, riso, image-generation, blog, editorial, mascot]
-    category: design
+    category: creative
     requires_toolsets: [terminal]
   openclaw:
     emoji: "🎨"

@@ -10,7 +10,7 @@ description: >-
   Clawpatch or one of its commands. Do NOT use it for generic "review this
   code", "find bugs", or "code review" requests that don't involve Clawpatch —
   those belong to a different tool.
-version: 0.1.2
+version: 0.1.3
 metadata:
   openclaw:
     homepage: https://clawpatch.ai
@@ -36,7 +36,7 @@ metadata:
         description: Only required when CLAWPATCH_PROVIDER=pi.
   hermes:
     tags: [code-review, clawpatch, cli, bug-fixing, automation]
-    category: code-review
+    category: software-development
     requires_toolsets: [terminal]
 ---
 

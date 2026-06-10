@@ -48,6 +48,18 @@ to include side by side:
 - `metadata.openclaw` — install directive, env vars, homepage, emoji.
 - `metadata.hermes` — tags, category, required toolsets.
 
+`metadata.hermes.category` must come from Hermes's standard set:
+
+```text
+apple, autonomous-ai-agents, browser, creative, data-science, devops, email,
+gaming, github, mcp, media, mlops, note-taking, productivity, red-teaming,
+research, security, smart-home, social-media, software-development, writing
+```
+
+Pick the closest existing category (e.g. an illustration skill → `creative`,
+a code-review skill → `software-development`). Inventing a new category should
+be rare and deliberate — only when the skill truly fits none of these.
+
 **Verify every runtime-specific field against that runtime's own docs before
 adding it. Do not fabricate frontmatter schemas** — a wrong field can break
 the skill silently in that runtime. The same goes for any CLI/command syntax
