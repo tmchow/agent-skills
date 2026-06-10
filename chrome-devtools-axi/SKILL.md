@@ -175,20 +175,58 @@ run the live help first:
 npx -y chrome-devtools-axi --help
 ```
 
-Use the skill for operating judgment: when to choose the tool, how to handle
-refs, how to verify actions, and which privacy/diagnostic modes are risky.
+Use this skill for durable agent judgment: when to choose the tool, how to
+sequence work, which commands are high leverage, how to verify actions, and
+which modes are privacy-sensitive.
 
-High-signal patterns agents tend to need:
+## Best-practice scenarios
+
+**Explore or verify a page.** Open the URL, snapshot it, then verify with URL,
+title, DOM, or screenshot evidence before reporting success:
 
 ```bash
 npx -y chrome-devtools-axi open https://example.com
 npx -y chrome-devtools-axi snapshot
-npx -y chrome-devtools-axi click @<uid>
 npx -y chrome-devtools-axi eval "document.title"
-npx -y chrome-devtools-axi console --type error --limit 20
-npx -y chrome-devtools-axi network --type fetch --limit 20
 npx -y chrome-devtools-axi screenshot /tmp/page.png
 ```
+
+**Interact with a page or form.** Use refs from the latest snapshot exactly as
+printed, then re-snapshot after each state-changing action:
+
+```bash
+npx -y chrome-devtools-axi click @<uid>
+npx -y chrome-devtools-axi fill @<uid> "value"
+npx -y chrome-devtools-axi press Enter
+npx -y chrome-devtools-axi snapshot
+```
+
+**Debug a web app.** Check console and network before guessing. Save large
+request/response bodies to files instead of dumping them into chat:
+
+```bash
+npx -y chrome-devtools-axi console --type error --limit 20
+npx -y chrome-devtools-axi network --type fetch --limit 20
+npx -y chrome-devtools-axi network-get <id> --response-file /tmp/response.json
+```
+
+**Use existing Chrome or logged-in state.** Prefer a fresh isolated browser.
+Connect to an existing browser/profile only when the task requires it and the
+user has authorized that scope:
+
+```bash
+CHROME_DEVTOOLS_AXI_BROWSER_URL=http://127.0.0.1:9222 npx -y chrome-devtools-axi snapshot
+CHROME_DEVTOOLS_AXI_AUTO_CONNECT=1 npx -y chrome-devtools-axi snapshot
+CHROME_DEVTOOLS_AXI_USER_DATA_DIR="$HOME/.chrome-devtools-axi/profile" npx -y chrome-devtools-axi open https://example.com
+```
+
+**Handle slow cold starts.** If repeated commands are slow because the bridge is
+bootstrapping `chrome-devtools-mcp` through `npx`, use the CLI help's current
+`CHROME_DEVTOOLS_AXI_MCP_PATH` recipe rather than inventing a path.
+
+**Use visual/GPU-sensitive pages.** For WebGL/WebGPU/GPU debugging, use headed
+mode and Chrome flags from the live help. Do not persist broad Chrome flags
+globally.
 
 For `run`, `emulate`, Lighthouse, performance traces, heap snapshots, or less
 common flags, consult `--help`/upstream docs at the moment of use instead of
@@ -198,57 +236,15 @@ copying examples from memory.
 
 Use environment variables inline for a single command or process when possible.
 Do not persist them globally unless the user explicitly wants that behavior.
-
-Connect to an existing DevTools endpoint:
-
-```bash
-CHROME_DEVTOOLS_AXI_BROWSER_URL=http://127.0.0.1:9222 npx -y chrome-devtools-axi snapshot
-```
-
-Connect to the user's running Chrome only when Chrome remote debugging is
-enabled and that scope is intentional:
-
-```bash
-CHROME_DEVTOOLS_AXI_AUTO_CONNECT=1 npx -y chrome-devtools-axi snapshot
-```
-
-Run visible Chrome:
-
-```bash
-CHROME_DEVTOOLS_AXI_HEADED=1 npx -y chrome-devtools-axi open https://example.com
-```
-
-For GPU/WebGL/WebGPU debugging, use headed mode plus explicit Chrome flags from
-the live `--help`; do not persist broad Chrome flags globally.
-
-Use a persistent user data directory only when the task intentionally needs
-logged-in/session state:
-
-```bash
-CHROME_DEVTOOLS_AXI_USER_DATA_DIR="$HOME/.chrome-devtools-axi/profile" npx -y chrome-devtools-axi open https://example.com
-```
-
 Treat persistent profiles as privacy-sensitive. Do not browse authenticated
 accounts, export cookies, or inspect private content unless the user explicitly
 authorizes that scope.
 
 ## Diagnostics and performance
 
-For app debugging, prefer the CLI's DevTools commands before guessing:
-
-```bash
-npx -y chrome-devtools-axi console --type all --limit 50
-npx -y chrome-devtools-axi console-get <id>
-npx -y chrome-devtools-axi network --type all --limit 50
-npx -y chrome-devtools-axi network-get <id>
-npx -y chrome-devtools-axi lighthouse --device desktop --output-dir /tmp/axi-lighthouse
-npx -y chrome-devtools-axi perf-start --file /tmp/trace.json
-npx -y chrome-devtools-axi perf-stop --file /tmp/trace.json
-npx -y chrome-devtools-axi heap /tmp/heap.heapsnapshot
-```
-
+For app debugging, prefer the CLI's console/network commands before guessing.
 Only run Lighthouse, traces, and heap snapshots when they materially help; they
-are slower and noisier than simple snapshots/console/network checks.
+are slower and noisier than simple snapshots, console checks, and network lists.
 
 ## Safety and privacy
 
