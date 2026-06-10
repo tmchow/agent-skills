@@ -33,6 +33,9 @@ metadata:
       - name: CHROME_DEVTOOLS_AXI_HEADED
         required: false
         description: Set to 1 to run Chrome in headed/visible mode.
+      - name: CHROME_DEVTOOLS_AXI_CHROME_ARGS
+        required: false
+        description: Whitespace-separated Chrome flags forwarded to the browser; no shell-style quoting. Useful with headed GPU/WebGL/WebGPU debugging.
       - name: CHROME_DEVTOOLS_AXI_BROWSER_URL
         required: false
         description: Existing Chrome DevTools endpoint. Supports http(s):// browserUrl or ws(s):// WebSocket endpoint.
@@ -45,6 +48,12 @@ metadata:
       - name: CHROME_DEVTOOLS_AXI_PORT
         required: false
         description: Local bridge server port. Defaults to 9224.
+      - name: CHROME_DEVTOOLS_AXI_MCP_PATH
+        required: false
+        description: Absolute path to a chrome-devtools-mcp script; avoids slow npx bootstrap on cold systems.
+      - name: CHROME_DEVTOOLS_AXI_BRIDGE_TIMEOUT_MS
+        required: false
+        description: Bridge readiness deadline in milliseconds. Defaults to 30000.
 ---
 
 # Chrome DevTools AXI
@@ -113,11 +122,12 @@ npx -y chrome-devtools-axi open https://example.com
    npx -y chrome-devtools-axi open https://example.com
    ```
 
-2. Use the latest snapshot refs exactly as printed:
+2. Use the latest snapshot refs exactly as printed. They look like `@g<N>:...`
+   and may include underscores, for example `@g4:1_3`:
 
    ```bash
-   npx -y chrome-devtools-axi click @g1:1
-   npx -y chrome-devtools-axi fill @g1:7 "search text"
+   npx -y chrome-devtools-axi click @<uid>
+   npx -y chrome-devtools-axi fill @<uid> "search text"
    npx -y chrome-devtools-axi press Enter
    ```
 
@@ -156,39 +166,33 @@ Hard rules:
 - Prefer refs over CSS selectors or DOM guessing. Use `eval` only when the
   accessibility surface cannot expose the needed state.
 
-## Useful command patterns
+## Command usage policy
 
-Navigation and page management:
+Do not treat this skill as the CLI reference. For exact flags and subcommands,
+run the live help first:
+
+```bash
+npx -y chrome-devtools-axi --help
+```
+
+Use the skill for operating judgment: when to choose the tool, how to handle
+refs, how to verify actions, and which privacy/diagnostic modes are risky.
+
+High-signal patterns agents tend to need:
 
 ```bash
 npx -y chrome-devtools-axi open https://example.com
-npx -y chrome-devtools-axi back
-npx -y chrome-devtools-axi scroll down
-npx -y chrome-devtools-axi wait "Loaded"
-npx -y chrome-devtools-axi pages
-npx -y chrome-devtools-axi newpage https://example.com --background
-npx -y chrome-devtools-axi selectpage <id>
-npx -y chrome-devtools-axi closepage <id>
-```
-
-Screenshots:
-
-```bash
-npx -y chrome-devtools-axi screenshot /tmp/page.png
-npx -y chrome-devtools-axi screenshot /tmp/full.png --full-page
-npx -y chrome-devtools-axi screenshot /tmp/element.png --uid @g1:1_7
-```
-
-JavaScript evaluation:
-
-```bash
+npx -y chrome-devtools-axi snapshot
+npx -y chrome-devtools-axi click @<uid>
 npx -y chrome-devtools-axi eval "document.title"
-npx -y chrome-devtools-axi eval '() => { return [...document.querySelectorAll("a")].map(a => a.href).slice(0, 10) }'
+npx -y chrome-devtools-axi console --type error --limit 20
+npx -y chrome-devtools-axi network --type fetch --limit 20
+npx -y chrome-devtools-axi screenshot /tmp/page.png
 ```
 
-For multi-step procedures, use `run` from stdin only after confirming its exact
-shape with `npx -y chrome-devtools-axi --help` or upstream docs, because script
-formats may evolve faster than this skill.
+For `run`, `emulate`, Lighthouse, performance traces, heap snapshots, or less
+common flags, consult `--help`/upstream docs at the moment of use instead of
+copying examples from memory.
 
 ## Existing Chrome, headed mode, and profiles
 
@@ -201,11 +205,21 @@ Connect to an existing DevTools endpoint:
 CHROME_DEVTOOLS_AXI_BROWSER_URL=http://127.0.0.1:9222 npx -y chrome-devtools-axi snapshot
 ```
 
+Connect to the user's running Chrome only when Chrome remote debugging is
+enabled and that scope is intentional:
+
+```bash
+CHROME_DEVTOOLS_AXI_AUTO_CONNECT=1 npx -y chrome-devtools-axi snapshot
+```
+
 Run visible Chrome:
 
 ```bash
 CHROME_DEVTOOLS_AXI_HEADED=1 npx -y chrome-devtools-axi open https://example.com
 ```
+
+For GPU/WebGL/WebGPU debugging, use headed mode plus explicit Chrome flags from
+the live `--help`; do not persist broad Chrome flags globally.
 
 Use a persistent user data directory only when the task intentionally needs
 logged-in/session state:
