@@ -75,6 +75,32 @@ quoted in a skill: confirm it against the tool's `--help`, don't guess.
 - When a reference is mandatory before acting, gate it explicitly in the body
   (a capsule summary + a "read `references/X.md` in full before …" stop).
 
+## CLI-wrapper skills
+
+For skills that wrap an external CLI/API tool, `SKILL.md` is not the man page.
+Use it for agent operating judgment that live `--help` will not provide:
+
+- when to choose the tool and when not to
+- the mental model needed to avoid misuse
+- where the actual underlying tool is installed from, including package name and source repo when relevant
+- install/verify commands for the underlying tool
+- a small set of canonical examples, not an exhaustive command list
+- failure handling and verification discipline
+- privacy, security, and side-effect boundaries
+
+Avoid full command tables, flag catalogs, exit-code catalogs, or examples likely
+to drift. Stable, high-value commands and flags *do* belong in the skill when
+they are key functionality or encode best-practice scenarios the agent would
+otherwise miss. Favor scenario-shaped guidance over exhaustive reference docs:
+"For X situation, run/consider Y, then verify Z." Tell agents to run the live
+tool help (`<tool> --help`, subcommand help, or upstream docs) for exact syntax
+around anything uncommon or version-sensitive. If quoting syntax anyway, verify
+it against current help during the PR.
+
+Use placeholders that agents cannot accidentally copy as stale literals. For
+example, prefer `@<uid>` plus "copy refs exactly as printed" over fake browser
+refs that look real but may be invalid.
+
 ## Per-skill README.md
 
 The human-facing landing page. GitHub renders it when someone browses the
@@ -92,6 +118,15 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 **Do not** restate the workflow, schema, exit codes, or step-by-step
 procedure from `SKILL.md` — that duplicates the agent doc and drifts. Keep the
 README to slow-changing metadata (purpose, prerequisites, install).
+
+## License guidance
+
+Default new skills to `license: MIT` in frontmatter because the repository root
+license is MIT. Use `MIT-0` or another per-skill license only when there is a
+clear reason, such as intentionally removing attribution requirements, matching
+an upstream asset/license constraint, or documenting a third-party-derived work
+that cannot honestly be represented as MIT. If using a non-default license,
+state the reason in the PR body and keep any required notices with the skill.
 
 ## illo character packs
 
