@@ -128,6 +128,17 @@ an upstream asset/license constraint, or documenting a third-party-derived work
 that cannot honestly be represented as MIT. If using a non-default license,
 state the reason in the PR body and keep any required notices with the skill.
 
+## illo character packs
+
+The `illo` skill has a companion content repo,
+[tmchow/illo-characters](https://github.com/tmchow/illo-characters). When
+creating or editing character packs anywhere (that repo, a user's local
+`~/.config/illo/characters/`, or skill docs/examples): **every character pack
+name is globally unique** — names are the selection keys agents use ("use
+anvil"), and illo-characters' `index.json` is the ecosystem registry. Check
+it before naming a character. Reserved names: `blot` (ships with the skill),
+`illo`, and the look names `riso`, `blueprint`, `woodcut`, `pixel`.
+
 ## Validate before committing
 
 - Frontmatter parses as valid YAML.
