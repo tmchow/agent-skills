@@ -137,7 +137,31 @@ creating or editing character packs anywhere (that repo, a user's local
 name is globally unique** — names are the selection keys agents use ("use
 anvil"), and illo-characters' `index.json` is the ecosystem registry. Check
 it before naming a character. Reserved names: `blot` (ships with the skill),
-`illo`, and the look names `riso`, `blueprint`, `woodcut`, `pixel`.
+`illo`, and the look names (`riso`, `blueprint`, `woodcut`, `pixel`, `clay`,
+`manila`, `chalk`, `phosphor`, `enamel`, `gouache`).
+
+## illo looks (style definitions)
+
+Styles split deliberately across the two repos: a character pack carries only
+a style **name** (its `Style:` line); the style **definition** — the ~3 KB
+prompt-block file in `illo/references/styles/<name>.md` — lives here, because
+style files are engine interface (their sections slot into
+`references/prompt-recipe.md` and must evolve with it) and shared
+infrastructure (one fix improves every pack that references the look). The
+consequences:
+
+- **Adding a character** never touches this repo — packs reference looks by
+  name and ship entirely through illo-characters.
+- **Adding a look** is a PR here: a new `references/styles/<name>.md` in the
+  established format (prompt blocks, palette mapping, character treatment,
+  labels, QA deltas), plus updating every enumeration of the look library
+  (SKILL.md description + body + references list, `character-builder.md`
+  interview + reserved names, the illo README "Looks" table, and the reserved
+  names above). New look names must not collide with any existing character
+  pack name in illo-characters' `index.json` — they become reserved both ways.
+- **No PR needed to experiment**: a custom style file at
+  `~/.config/illo/styles/<name>.md` works immediately for that user; promote
+  it here once it proves out.
 
 ## Validate before committing
 
