@@ -88,9 +88,13 @@ Use it for agent operating judgment that live `--help` will not provide:
 - privacy, security, and side-effect boundaries
 
 Avoid full command tables, flag catalogs, exit-code catalogs, or examples likely
-to drift. Tell agents to run the live tool help (`<tool> --help`, subcommand
-help, or upstream docs) for exact syntax. If quoting syntax anyway, verify it
-against current help during the PR.
+to drift. Stable, high-value commands and flags *do* belong in the skill when
+they are key functionality or encode best-practice scenarios the agent would
+otherwise miss. Favor scenario-shaped guidance over exhaustive reference docs:
+"For X situation, run/consider Y, then verify Z." Tell agents to run the live
+tool help (`<tool> --help`, subcommand help, or upstream docs) for exact syntax
+around anything uncommon or version-sensitive. If quoting syntax anyway, verify
+it against current help during the PR.
 
 Use placeholders that agents cannot accidentally copy as stale literals. For
 example, prefer `@<uid>` plus "copy refs exactly as printed" over fake browser
