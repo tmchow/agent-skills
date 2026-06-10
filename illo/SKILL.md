@@ -1,20 +1,21 @@
 ---
-name: blip
+name: illo
 description: >-
   Use this skill to create original editorial illustrations for articles, blog
-  posts, newsletters, or docs in Blip's distinctive risograph print style with a
-  recurring screen-faced robot mascot (Blip). Triggers: "illustrate this post",
-  "make article images", "riso illustration", "Blip illustration", "mini-comic",
-  "shot list for my blog", "cover image for this piece", "draw this concept in
-  our style", or generating, refining, recoloring, comparing, or planning these
-  images. Turns an article into an interleaved set of one-idea-per-image riso
-  scenes, and a concept into a single image or a 2–4 panel mini-comic; supports
-  named + derived palettes, model choice, variation/model-comparison galleries,
-  and a reference lock that keeps the mascot on-model. Do NOT use for
-  photorealistic images, logos, app/UI mockups, generic stock art, charts, or
-  plain text-to-image requests that do not want this specific riso + mascot
-  house style.
-version: 0.2.1
+  posts, newsletters, or docs in a distinctive risograph print style, starring
+  a recurring mascot that performs each idea (default: Blot, a deadpan
+  ink-drop character; swappable via character packs). Triggers: "illustrate
+  this post", "make article images", "riso illustration", "illo this",
+  "mini-comic", "shot list for my blog", "draw this concept in our style",
+  "make me a mascot" / "change my character", or generating, refining,
+  recoloring, comparing, or planning these images. Turns an article into an
+  interleaved set of one-idea-per-image scenes and a concept into a single
+  image or a 2–4 panel mini-comic; includes a character builder, named +
+  derived + custom palettes, variation/model-comparison galleries, and a
+  reference lock that keeps the mascot on-model. Do NOT use for photorealistic
+  images, logos, app/UI mockups, generic stock art, charts, or plain
+  text-to-image requests that do not want this mascot house style.
+version: 0.3.0
 author: Trevin Chow
 license: MIT
 platforms: [macos, linux]
@@ -32,43 +33,47 @@ metadata:
       - name: OPENROUTER_API_KEY
         required: true
         description: >-
-          OpenRouter API key used by scripts/blip.py to call the image model
+          OpenRouter API key used by scripts/illo.py to call the image model
           (default Grok Imagine; any OpenRouter image model via --model).
-          May instead be stored in the user config via `blip.py init`.
+          May instead be stored in the user config via `illo.py init`.
 ---
 
-# Blip
+# Illo
 
 Make original, distinctive editorial illustrations for written content. One
 image explains one idea: a key judgment, a flow, a before/after, a trap, a
-loop. **Blip** — a recurring screen-faced robot mascot — is the one performing
-the idea in every scene; the subject, never decoration. When one idea advances
-through stages, it can be a **mini-comic**: 2–4 panels inside a single image.
+loop. A **recurring mascot** is the one performing the idea in every scene —
+the subject, never decoration. When one idea advances through stages, it can
+be a **mini-comic**: 2–4 panels inside a single image.
 
-This is a specific house style, not a generic image generator. The look is a
-**risograph print**: grainy halftone, slight ink-layer offset, faint paper
-grain, flat fills, and one bold, even-weight, softly-rounded outline on
-everything. It is intentionally not a photo, not a logo, not a corporate
-infographic, not a flowchart, not a UI mockup. The technique and character are
-the constants; the **palette is a parameter** (presets, or derived from one
-color), so the same style can match a blog, a brand, or a mood.
+This is a configurable house style, not a generic image generator. The
+**methodology and print technique are the constants**: a risograph look —
+grainy halftone, slight ink-layer offset, faint paper grain, flat fills, and
+one bold, even-weight, softly-rounded outline on everything. It is
+intentionally not a photo, not a logo, not a corporate infographic, not a
+flowchart, not a UI mockup. The **character and palette are parameters**: the
+skill ships with **Blot** (a deadpan ink-drop mascot) and named palettes, and
+both are replaceable — a custom character pack keeps the user's own mascot
+on-model, and palettes come from presets, the user's own palette file, or one
+derived color.
 
 ## Use cases — route the request
 
 | The user wants | The path |
 |---|---|
-| **Illustrate an article / post / newsletter** | Steps 1–6: pull the load-bearing moments, shot list, one image per anchor, interleave by placement. Blog destination → `notes` palette. |
+| **Illustrate an article / post / newsletter** | Steps 0–7: pull the load-bearing moments, shot list, one image per anchor, interleave by placement. |
 | **One image for a single concept** | Step 1 concept branch (up to ~3 quick questions if the idea is thin), then a single image. |
 | **A sequence — process, before→after, fail→fix** | One **mini-comic** when the progression sits in one place (routing in `references/composition.md`). Best shape for social. |
 | **Social-ready art** | 16:9 (or 1:1), bold `ink-punch`, watermark with the `x` handle if configured or asked. |
-| **Blog / brand / site-matched art** | A named preset, or derive the palette from one dominant color (`references/palettes.md`). |
-| **Options to pick from, or "which model is best"** | Step 4b: `--count` variations or a model loop → `gallery` with a recommendation. |
-| **Fix an existing image** (stray title, recolor, Blip too decorative) | Edit prompts in `references/prompt-recipe.md`, passing the image back as `--ref`. |
+| **Blog / brand / site-matched art** | A named or custom palette, or derive the palette from one dominant color (`references/palettes.md`). |
+| **Their own mascot** — "make me a character", "use our mascot", "replace Blot" | The character builder: read `references/character-builder.md` in full and follow it end to end. |
+| **Options to pick from, or "which model is best"** | Step 5b: `--count` variations or a model loop → `gallery` with a recommendation. |
+| **Fix an existing image** (stray title, recolor, mascot too decorative) | Edit prompts in `references/prompt-recipe.md`, passing the image back as `--ref`. |
 
 ## Prerequisites
 
 - **An OpenRouter API key.** Generation goes straight to OpenRouter's image API
-  via `scripts/blip.py` (stdlib Python, no installs). The key resolves as
+  via `scripts/illo.py` (stdlib Python, no installs). The key resolves as
   `--api-key` > `$OPENROUTER_API_KEY` > the user config file. The env var is
   preferred (runtime-native); the config file is an optional convenience.
 - **`python3`** and network access. Nothing else to install.
@@ -80,9 +85,9 @@ color), so the same style can match a blog, a brand, or a mood.
 Entering an API key is something the **user** does. Do not type, paste, or write
 the user's key — direct them to bootstrap it:
 
-- **Bootstrap (user runs it):** `python3 scripts/blip.py init` — prompts for the
+- **Bootstrap (user runs it):** `python3 scripts/illo.py init` — prompts for the
   key at a hidden prompt (never echoed) and writes the optional YAML config
-  `${XDG_CONFIG_HOME:-~/.config}/blip/config.yaml` (mode 600). It can also store
+  `${XDG_CONFIG_HOME:-~/.config}/illo/config.yaml` (mode 600). It can also store
   non-secret defaults: `--model`, `--palette`, `--aspect`. Use `--no-key` to set
   only preferences and leave the key to the env var. (The config file is read via
   PyYAML; without it the file is ignored and the tool runs from env var + flags,
@@ -95,16 +100,18 @@ the user's key — direct them to bootstrap it:
 Do not load everything at once. Pull the file that matches the step:
 
 - `references/visual-style.md` — the risograph look, line language, paper/ink, hard do/don'ts.
-- `references/character.md` — the mascot spec, the value-follows-palette rule, the anti-complexity guardrails, and the load-bearing test.
-- `references/palettes.md` — named presets, default resolution, the character-value-by-palette rule, **and the derive-a-palette-from-one-color algorithm**. Read in full before choosing or deriving any palette.
+- `references/character.md` — the character rules (the load-bearing test, anti-complexity guardrails, value-follows-palette), the default character **Blot**, and the custom-pack format. Read before any character work.
+- `references/character-builder.md` — the guided flow for designing and installing a user's own mascot. Read in full before building or replacing a character.
+- `references/palettes.md` — named presets, default resolution, custom palettes, **and the derive-a-palette-from-one-color algorithm**. Read in full before choosing or deriving any palette.
 - `references/composition.md` — stagings, turning an idea into a move, the no-recycled-composition rule, and the shot-list format.
 - `references/prompt-recipe.md` — the generation prompt template and the edit/recolor prompts.
 - `references/quality-bar.md` — the post-generation checklist and iteration rules. Read before delivering.
 
-`assets/character-reference.png` is the canonical model sheet — the consistency
-anchor (used by the engine, below). `assets/examples/` are style-calibration
-samples only: study line density, negative space, and accent restraint. **Never
-copy their compositions** — invent a fresh metaphor for the current piece.
+`assets/character-reference.png` is the default character's canonical model
+sheet — the consistency anchor (used by the engine, below); a custom pack
+brings its own. `assets/examples/` are style-calibration samples only: study
+line density, negative space, and accent restraint. **Never copy their
+compositions** — invent a fresh metaphor for the current piece.
 
 ## Workflow
 
@@ -113,12 +120,13 @@ copy their compositions** — invent a fresh metaphor for the current piece.
 Before generating, confirm the engine is ready:
 
 ```bash
-python3 "$SKILL_DIR/scripts/blip.py" doctor
+python3 "$SKILL_DIR/scripts/illo.py" doctor
 ```
 
-It reports python, the config path, the resolved model/palette defaults, and
+It reports python, the config path, the resolved model/palette defaults,
+whether a **custom character pack** or **custom palettes file** exists, and
 whether a key is found (without revealing it); exit 0 = ready. If the key is
-**missing**, stop and ask the user to run `python3 scripts/blip.py init`
+**missing**, stop and ask the user to run `python3 scripts/illo.py init`
 themselves (or to export `OPENROUTER_API_KEY`) — do not enter the key for them.
 
 ### 1. Read the input — and clarify a thin concept (briefly)
@@ -143,50 +151,68 @@ Two kinds of input, handled differently:
   "surprise me", or the answer is obvious from context. Never block a clear
   request by asking.
 
-### 2. Plan (shot list) — when asked to plan, or for anything multi-image
+### 2. Resolve the character
+
+Character packs are named folders under
+`${XDG_CONFIG_HOME:-~/.config}/illo/characters/<name>/`, each holding
+`character.md` (the spec) + `reference.png` (the model sheet); the pack name
+is the folder name, and `doctor` lists what's installed. A user can keep
+several and pick per run. First match wins:
+
+1. **Explicit request** — "use <pack name>", "as <name>": that pack (or the
+   shipped default when its name is asked for).
+2. **Config default** — `defaultCharacter` from the user config, if set.
+3. **Shipped default** — **Blot** (spec in `references/character.md`, model
+   sheet `assets/character-reference.png`).
+
+Once resolved, read the pack's `character.md` and use its prompt spec, value
+rules, and `reference.png` everywhere the default's would be used.
+
+If the user wants a *new* character, that is the character builder
+(`references/character-builder.md`) — build and install it first, then
+continue here.
+
+### 3. Plan (shot list) — when asked to plan, or for anything multi-image
 
 If the user wants planning ("where should this be illustrated", "shot list"),
 output a shot list before generating. Per image: placement, the one idea,
-the staging, **what Blip is doing**, the palette, and the 1–3 short English
-labels. Let the anchor count drive how many (bands and the never-pad rule are
-in `references/composition.md`). When a stretch of the piece advances through
-stages **in one place**, plan a single mini-comic image there instead of
-several — the mini-comic-vs-separate routing is in `references/composition.md`.
+the staging, **what the mascot is doing**, the palette, and the 1–3 short
+English labels. Let the anchor count drive how many (bands and the never-pad
+rule are in `references/composition.md`). When a stretch of the piece advances
+through stages **in one place**, plan a single mini-comic image there instead
+of several — the mini-comic-vs-separate routing is in
+`references/composition.md`.
 
-### 3. Resolve the palette
+### 4. Resolve the palette
 
-Resolve in this order (first match wins):
+Read `references/palettes.md` in full and resolve there — it holds the
+resolution order (explicit request, then destination cue via the user's
+palettes file, then config default, then house `ink-punch`), the named
+presets, custom palettes, and the derive-a-palette-from-one-color algorithm.
+Whatever the path, end with **concrete hex values** to put in the prompt.
 
-1. **Explicit request** — e.g. "use ink-punch", "Notes palette", "make it emerald".
-2. **Destination cue** — a blog / Substack / personal-site context (or a pasted
-   article from one) → the matching blog preset (e.g. `notes`).
-3. **Config default** — `defaultPalette` from the user config, if set.
-4. **House default** — `ink-punch`.
-
-For an arbitrary dominant color, derive the rest by the algorithm in
-`references/palettes.md`. Whatever the path, end with **concrete hex values**
-to put in the prompt.
-
-### 4. Generate — reference-locked, one metaphor per image
+### 5. Generate — reference-locked, one metaphor per image
 
 Build a full prompt per image from `references/prompt-recipe.md` (scene +
-structure + style + resolved palette hexes + ≤3 labels), write it to a file,
-and render it. **Pass `assets/character-reference.png` as `--ref` every time** —
-that reference conditioning is what keeps the mascot on-model; style and palette
-come from the prompt, so palettes stay swappable.
+structure + style + the active character's spec + resolved palette hexes +
+≤3 labels), write it to a file, and render it. **Pass the active character's
+model sheet as `--ref` every time** — that reference conditioning is what
+keeps the mascot on-model; style and palette come from the prompt, so palettes
+stay swappable.
 
 ```bash
-SKILL_DIR="<path to this skill>"           # contains scripts/blip.py + assets/
+SKILL_DIR="<path to this skill>"           # contains scripts/illo.py + assets/
+REF="$SKILL_DIR/assets/character-reference.png"   # or the active pack's reference.png
 
-python3 "$SKILL_DIR/scripts/blip.py" generate \
+python3 "$SKILL_DIR/scripts/illo.py" generate \
   --prompt-file /tmp/shot-01.txt \
-  --ref "$SKILL_DIR/assets/character-reference.png" \
+  --ref "$REF" \
   --aspect 16:9 \
   --out "assets/<slug>-illustrations/01-topic.png"
   # --model <id> to override the config/default model for this image
 ```
 
-`blip.py generate` prints a **JSON line per image** (`{path, model, id, cost,
+`illo.py generate` prints a **JSON line per image** (`{path, model, id, cost,
 width, height, label, prompt}`) and appends the same record to
 `<out-dir>/manifest.jsonl`.
 Read `.path`; use `.width/.height` to catch a square when you asked for 16:9 (re-roll).
@@ -196,7 +222,7 @@ well as the character, add a finished example as a second `--ref`. Pass `--label
 for a caption that shows in the gallery.
 
 **Model choice.** Resolution is `--model` > config `model` > built-in default.
-`blip.py` takes a full OpenRouter id only — the friendly-name translation is
+`illo.py` takes a full OpenRouter id only — the friendly-name translation is
 yours: when the user names a model in plain language, map it to the id and pass
 it as `--model`. Don't make the user remember the formal ids.
 
@@ -205,7 +231,7 @@ it as `--model`. Don't make the user remember the formal ids.
 | "Grok Imagine", "Grok image", "xAI image", "Grok", or says nothing | `x-ai/grok-imagine-image-quality` | **default**; bold riso, strong character lock, cheapest, 16:9 |
 | "Nano Banana 2", "nano banana", "banana", "nb2" | `google/gemini-3.1-flash-image-preview` | safe catalogued fallback; fast, reliable text; 16:9 |
 | "Nano Banana Pro", "banana pro", "nb pro", "the pro one" | `google/gemini-3-pro-image-preview` | richest detail; honors 16:9 |
-| "GPT Image 2", "GPT image", "GPT-5.4 Image", "OpenAI image" | `openai/gpt-5.4-image-2` | strong instructions; pricey; tends square |
+| "GPT Image 2", "GPT image", "GPT-5.4 Image", "GPT-5.4 Image 2", "OpenAI image" | `openai/gpt-5.4-image-2` | strong instructions; pricey; tends square |
 | "Microsoft AI Image", "MAI Image", "Microsoft image", "MAI 2.5" | `microsoft/mai-image-2.5` | clean, lighter grain; honors 16:9 |
 
 Translating:
@@ -218,7 +244,7 @@ Translating:
   rather than guess — and confirm it's an **image-output** model on OpenRouter.
 - **Aspect ratio** is only a prompt-text hint, so some models (e.g. GPT) ignore
   it and return square; the others honor 16:9. Crop in post if needed.
-- Some models are image-only output — `blip.py` retries with image-only
+- Some models are image-only output — `illo.py` retries with image-only
   modality automatically. A 404 on *modalities* even after that retry means the
   id isn't an image model on OpenRouter (e.g. MiniMax M3) — drop it. Ids drift;
   if one 404s, this table is what to update.
@@ -230,13 +256,10 @@ Translating:
 **Watermark / attribution (optional, off by default).** The skill ships with
 **no** default watermark — the text comes only from the user's `watermark`
 config map (read from the config file) or an explicit request, so installers
-never inherit someone else's handle. Resolve: request text > `watermark[<cue>]`
-(e.g. `blog`, `x`) > `watermark.default` > none; when one resolves, append the
-watermark line from `references/prompt-recipe.md`. The model bakes it in, so a
-blog vs. X pair is two separate renders; for one identical image with two
-handles, skip it and stamp copies in an editor.
+never inherit someone else's handle. The resolution order, the prompt line to
+append, and the two-render caveat are in `references/prompt-recipe.md`.
 
-### 4b. Batches & comparison (only when it helps)
+### 5b. Batches & comparison (only when it helps)
 
 **Default to ONE image.** Fan out only when the user asks for options/comparison
 or the piece is important enough to be worth it — and **say the projected cost
@@ -245,17 +268,17 @@ orchestrate the
 loop; the skill gives you the primitives:
 
 ```bash
-RUN=$(python3 "$SKILL_DIR/scripts/blip.py" newrun)      # -> /tmp/blip/<runid>
+RUN=$(python3 "$SKILL_DIR/scripts/illo.py" newrun)      # -> /tmp/illo/<runid>
 # (a) VARIATIONS — same prompt+model, pick-the-best:
-python3 .../blip.py generate --prompt-file p.txt --ref <ref> --count 4 --label "draft→ship" --out "$RUN/v.png"
+python3 .../illo.py generate --prompt-file p.txt --ref <ref> --count 4 --label "draft→ship" --out "$RUN/v.png"
 # (b) MODEL COMPARISON — loop the SAME prompt over models you choose:
 for m in x-ai/grok-imagine-image-quality google/gemini-3-pro-image-preview; do
-  python3 .../blip.py generate --prompt-file p.txt --ref <ref> --model "$m" --label "$m" --out "$RUN/$(basename $m).png"; done
+  python3 .../illo.py generate --prompt-file p.txt --ref <ref> --model "$m" --label "$m" --out "$RUN/$(basename $m).png"; done
 # (c) CONCEPT VARIATIONS — different prompts (different stagings) for one idea:
-python3 .../blip.py generate --prompt-file staging-A.txt --ref <ref> --label "as a funnel" --out "$RUN/a.png"
-python3 .../blip.py generate --prompt-file staging-B.txt --ref <ref> --label "as a crossing" --out "$RUN/b.png"
+python3 .../illo.py generate --prompt-file staging-A.txt --ref <ref> --label "as a funnel" --out "$RUN/a.png"
+python3 .../illo.py generate --prompt-file staging-B.txt --ref <ref> --label "as a crossing" --out "$RUN/b.png"
 
-python3 "$SKILL_DIR/scripts/blip.py" gallery "$RUN" --open    # build + open index.html
+python3 "$SKILL_DIR/scripts/illo.py" gallery "$RUN" --open    # build + open index.html
 # add --embed for a single portable file (images inlined)
 ```
 
@@ -266,16 +289,17 @@ comparison readable (the prompt is the variable). Always present the gallery
 **with a recommendation**, not a raw dump. Multi-model failures are per-image
 (an unavailable model errors that one render only); keep the rest.
 
-### 5. QA and iterate
+### 6. QA and iterate
 
 Check every image against `references/quality-bar.md`. Re-roll or edit when the
-mascot is decorative, the body is wrong-value for the palette, label text sits
-on a colored fill, the accent has spread past antenna + 1–2 elements, an
-unwanted title bar appears, the composition copies an example, or text is
-misspelled. Subject scale varies run-to-run — re-roll if the subject is tiny
-(check `.width/.height` in the JSON: a square back when you asked 16:9 → re-roll).
+mascot is decorative or off its locked spec, the body is wrong-value for the
+palette, label text sits on a colored fill, the accent has spread past the
+character's accent part + 1–2 elements, an unwanted title bar appears, the
+composition copies an example, or text is misspelled. Subject scale varies
+run-to-run — re-roll if the subject is tiny (check `.width/.height` in the
+JSON: a square back when you asked 16:9 → re-roll).
 
-### 6. Deliver
+### 7. Deliver
 
 Copy finals next to the user's work when appropriate
 (`assets/<slug>-illustrations/01-topic.png`, `02-topic.png`, …); never
