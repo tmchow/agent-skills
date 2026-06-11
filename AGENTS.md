@@ -160,8 +160,23 @@ to SAFE; build new skills to them from the start:
 - **Don't take secrets as CLI flags either.** Command-line arguments leak
   into process listings, shell history, and agent transcripts. The one
   scan-clean credential channel is a config file written by a **user-run**
-  `init` (hidden `getpass` prompt, file mode 600) — runtime-agnostic, since
-  every runtime shares the user's home.
+  `init` (hidden `getpass` prompt, file mode 600). On machines with a
+  persistent home that's runtime-agnostic — every runtime reads the same
+  file.
+- **Ephemeral cloud workspaces bridge via the platform's secrets, in the
+  setup hook.** Claude Code web, Codex cloud, and CI have no interactive
+  prompt and no persistent home; their native secret mechanism is the
+  workspace env. Keep the skill's *code* env-free anyway, and put the
+  bridge in the environment's setup hook (Codex setup script, devcontainer
+  `postCreateCommand`, a CI step): a one-liner that materializes the config
+  file from the workspace secret (see illo's README, "Cloud & CI"). Scanned
+  prose documenting that shell one-liner passes `skills_guard` — the
+  exfiltration patterns target code reads (`os.environ`, `printenv`,
+  curl/wget interpolation), not a `printf` redirect in docs. The consent
+  line that makes this safe: a **platform-provisioned workspace secret** is
+  deliberate and scoped to that workspace, so an agent may seed the config
+  from it once; an **ambient env var on a personal machine** proves nothing
+  about intent (it may belong to other tools) — never copy it.
 - **Keep credentials out of frontmatter.** No `envVars:`-style declarations
   for secrets; credential setup belongs in body text as something the user
   runs themselves. Agents must not enter, paste, print, or store a user's
