@@ -1,12 +1,12 @@
 # agent-skills
 
 A personal, multi-skill collection of cross-platform AI agent skills
-(`SKILL.md` format), installable à la carte through runtime-specific lanes.
-This repo currently targets Hermes and OpenClaw first: Hermes installs from raw
-`SKILL.md` URLs via `hermes skills install` or `/skills install`, while OpenClaw
-installs published skills from ClawHub via `openclaw skills install <slug>`.
-Generic Agent Skills installers may work too, but do not document them as the
-only path.
+(`SKILL.md` format), installable à la carte through runtime-specific lanes:
+the generic skills CLI (`npx skills add tmchow/agent-skills --skill <name>`,
+works across Claude Code/Cursor/Codex and other Agent-Skills runtimes),
+Hermes (raw `SKILL.md` URLs via `hermes skills install` or `/skills
+install`), and OpenClaw (ClawHub via `openclaw skills install <slug>`).
+Document lanes side by side; never present one as the only path.
 
 This guide is for anyone (human or agent) editing the repo. Keep it accurate
 when conventions change.
@@ -110,7 +110,11 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 - One-paragraph what-it-is, in human framing.
 - **Prerequisites** — external tools, accounts, or credentials the skill
   needs. This is the highest-value section; `SKILL.md` buries it.
-- Runtime-specific install commands for *this* skill: Hermes CLI/slash-command install and OpenClaw ClawHub install. If the ClawHub slug is not known yet, mark it provisional and update it after publish before merge.
+- Install commands for *this* skill: the generic skills-CLI one-liner
+  (`npx skills add tmchow/agent-skills --skill <name>`) first, then the Hermes
+  CLI/slash-command install and OpenClaw ClawHub install. If the ClawHub slug
+  is not known yet, mark it provisional and update it after publish before
+  merge.
 - A few capability bullets and a link to the upstream tool/API.
 - An explicit line: "SKILL.md is the agent-facing instructions; you don't
   need to read it to use the skill."
@@ -171,4 +175,4 @@ consequences:
 - `description` ≤ 1024 characters.
 - Any install/command syntax in `README.md` or `SKILL.md` is real — checked
   against the tool's `--help`, not guessed.
-- Installer syntax is runtime-specific. For Hermes, verify against `hermes skills --help` and `/skills`; for OpenClaw, verify against ClawHub publish/install output and `openclaw skills --help`. A sibling `README.md` is for humans and must never be required for the skill to run.
+- Installer syntax is runtime-specific. For the skills CLI, verify against `npx -y skills --help`; for Hermes, verify against `hermes skills --help` and `/skills`; for OpenClaw, verify against ClawHub publish/install output and `openclaw skills --help`. A sibling `README.md` is for humans and must never be required for the skill to run.
