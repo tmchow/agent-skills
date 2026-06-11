@@ -20,6 +20,10 @@ when conventions change.
 - `<skill-name>/SKILL.md` — required. The agent-facing instructions.
 - `<skill-name>/README.md` — required. The human-facing landing page (below).
 - `<skill-name>/references/` — optional. Deep material loaded on demand.
+- `<skill-name>-examples/` — optional, top level. Docs-only images a skill
+  links by raw URL (e.g. `illo-examples/`). Kept **outside** the skill
+  directory because installers copy the entire skill directory verbatim —
+  anything inside it ships to every user.
 - Root `README.md` — the catalog: one row per skill.
 - Root `LICENSE` — MIT.
 
@@ -148,10 +152,12 @@ to SAFE; build new skills to them from the start:
   for secrets; credential setup belongs in body text as something the user
   runs themselves. Agents must not enter, paste, print, or store a user's
   key.
-- **Budget the installed bundle: ≤ 1 MB total, no file over 256 KB.** Add a
-  `.skillignore` to exclude docs-only assets (calibration examples,
-  screenshots) and link them by raw GitHub URL from the references instead;
-  compress only what must ship.
+- **Budget the installed bundle: ≤ 1 MB total, no file over 256 KB.** Keep
+  docs-only assets (calibration examples, screenshots) **outside the skill
+  directory** — in a sibling `<skill>-examples/` dir — and link them by raw
+  GitHub URL. A `.skillignore` is not enough: the scanner honors it but
+  installers copy the whole skill directory verbatim, so ignored files still
+  ship and bloat every install. Compress only what must ship.
 - **Re-verify any compressed asset that is a functional input — by running
   it, on every backend.** Format support differs per provider: Azure's
   image API rejects WebP reference images ("Only JPEG and PNG are
