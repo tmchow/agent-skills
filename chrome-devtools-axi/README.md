@@ -16,13 +16,13 @@ No API key is required. `CHROME_DEVTOOLS_AXI_WS_HEADERS` can contain secrets for
 ### Hermes
 
 ```bash
-hermes skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/chrome-devtools-axi/SKILL.md
+hermes skills install tmchow/agent-skills/chrome-devtools-axi
 ```
 
 From an interactive Hermes session:
 
 ```text
-/skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/chrome-devtools-axi/SKILL.md
+/skills install tmchow/agent-skills/chrome-devtools-axi
 /reload-skills
 /skill chrome-devtools-axi
 ```
