@@ -200,6 +200,21 @@ to SAFE; build new skills to them from the start:
 - **Pin every install command** quoted in docs or code
   (`pip install 'PyYAML==6.0.2'`, `npx -y tool@1.2.3`) — unpinned installs
   scan as supply-chain risk and drift anyway.
+- **Binary assets need a Hermes repair preflight.** Some Hermes versions
+  corrupt binary files (images, fonts, models) when installing multi-file
+  skills from GitHub — binaries get decoded as text; text files survive.
+  The pattern (see illo): a generated manifest `assets/checksums.txt`
+  (`<sha256>  <pin-commit>  <relpath>`, written by
+  `.github/scripts/regen_asset_checksums.py`, kept current automatically by
+  the `asset-checksums` workflow — PRs touching assets get the regenerated
+  manifest committed back to their branch); a generic, never-edited
+  `scripts/repair-hermes-assets.sh` that verifies each asset and re-downloads
+  mismatches from the immutable raw URL its pin commit implies; a magic-byte
+  check in the engine's preflight (`doctor`) so *every* runtime detects
+  corruption; and a SKILL.md section scoping the repair run to Hermes Agent
+  only (`bash ${HERMES_SKILL_DIR}/scripts/repair-hermes-assets.sh`). The
+  script is checksum-gated, so it's harmless anywhere. **Remove the preflight
+  once Hermes ships its installer fix** — the detection in `doctor` can stay.
 
 ## License guidance
 
