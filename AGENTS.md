@@ -147,8 +147,14 @@ to SAFE; build new skills to them from the start:
   Hermes's `required_environment_variables` frontmatter (Secure Setup on
   Load) does **not** exempt the read: as of June 2026 its scanner flags the
   `os.environ.get` even when the variable is declared (tested — verdict
-  DANGEROUS, install blocked). Revisit only if the guard becomes
-  declaration-aware. When a scanner flags a pattern, fix it by **removal,
+  DANGEROUS, install blocked). This is deliberate, not a scanner bug: the
+  environment is a shared namespace, so a community skill reading a
+  secret-shaped var can harvest a key the user set for *other* tools
+  (Secure Setup only prompts for missing vars — pre-existing values flow
+  with no consent), and a declaration would just be consent-washing.
+  Secure Setup is therefore de facto reserved for Hermes's trusted tier
+  (openai/anthropics/huggingface/NVIDIA skills). Revisit only if Hermes
+  adds per-skill scoped secret provisioning that isn't the shared env. When a scanner flags a pattern, fix it by **removal,
   not renaming** — renaming a variable (or switching to a synonym API) to
   dodge the regex is scanner evasion, and scanners say so.
 - **Don't take secrets as CLI flags either.** Command-line arguments leak
