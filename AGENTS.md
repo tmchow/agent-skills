@@ -263,22 +263,28 @@ consequences:
 
 ## Publishing to ClawHub
 
-Publishing is **on-demand only** — the `Publish a skill to ClawHub` workflow
-(`.github/workflows/publish-clawhub.yml`) runs via manual dispatch, never on
-push. It is double-gated:
+ClawHub publishing is **opt-in per skill, automatic per merge**. The
+registry is `.github/clawhub-publishable.txt` — one directory name per line,
+living beside the publish workflow on purpose (one file to read to know what
+ships). A skill is published if and only if it is listed there; opting in is
+a deliberate act done via PR.
 
-1. The skill must be listed in `.github/clawhub-publishable.txt` (one
-   directory name per line). Not every skill in this repo is eligible; add a
-   skill to the list via PR before its first publish.
-2. The version in the skill's `SKILL.md` frontmatter must be **new** on
-   ClawHub — the workflow checks existing versions and refuses a republish,
-   so bump `version:` before dispatching.
+- **On merge to main**, `.github/workflows/publish-clawhub.yml` publishes
+  every opted-in skill the push touched — but only when the skill's
+  `SKILL.md` `version:` is **new** on ClawHub. A touched skill without a
+  version bump is skipped quietly (docs-only merges stay green); bump
+  `version:` in the same PR whenever a change should ship.
+- **Manual dispatch** publishes one named skill and is strict: an
+  already-published version fails loudly. Use it for first publishes and
+  re-runs. Inputs: `skill` (required), `changelog` (optional, defaults to a
+  sha-stamped message).
+- Auth comes from the `CLAW_TOKEN` repository secret (a ClawHub API token).
 
-Auth comes from the `CLAW_TOKEN` repository secret (a ClawHub API token).
-Dispatch inputs: `skill` (required) and `changelog` (optional, defaults to
-a sha-stamped message). After a skill's **first** publish, update its README's
-provisional ClawHub slug line and the root catalog (per the per-skill README
-rules above).
+**Consistency rule:** a skill whose README documents the OpenClaw install
+lane should be opted into the registry, and every registry entry's README
+should document that lane — the two lists must not drift apart. After a
+skill's **first** publish, replace its README's provisional ClawHub slug
+note and update the root catalog (per the per-skill README rules above).
 
 ## Validate before committing
 

@@ -1,8 +1,14 @@
-name: Publish a skill to ClawHub
+name: Publish skills to ClawHub
 
-# On-demand only, by design: publishing is a deliberate act, gated on
-# .github/clawhub-publishable.txt so not every skill in the repo is eligible.
+# Opt-in per skill, automatic per merge: pushes to main publish every skill
+# that (a) is listed in .github/clawhub-publishable.txt (the registry) and
+# (b) was touched by the push and (c) has a SKILL.md version that is new on
+# ClawHub. A touched skill without a version bump is skipped quietly so
+# docs-only merges stay green. Manual dispatch publishes one named skill and
+# is strict: an already-published version fails loudly.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       skill:
@@ -17,72 +23,77 @@ on:
 
 jobs:
   publish:
-    name: Publish ${{ inputs.skill }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
-    env:
-      SKILL: ${{ inputs.skill }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Gate on the publishable list
+      - name: Determine target skills
+        id: targets
         shell: bash
+        env:
+          INPUT_SKILL: ${{ inputs.skill }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if ! grep -Fxq "$SKILL" .github/clawhub-publishable.txt; then
-            echo "::error::'$SKILL' is not listed in .github/clawhub-publishable.txt — add it there (via PR) before publishing."
-            exit 1
+          registry="$(grep -vE '^\s*(#|$)' .github/clawhub-publishable.txt)"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if ! grep -Fxq "$INPUT_SKILL" <<<"$registry"; then
+              echo "::error::'$INPUT_SKILL' is not opted in via .github/clawhub-publishable.txt — add it there (via PR) first."
+              exit 1
+            fi
+            if [ ! -f "$INPUT_SKILL/SKILL.md" ]; then
+              echo "::error::$INPUT_SKILL/SKILL.md not found"
+              exit 1
+            fi
+            echo "targets=$INPUT_SKILL" >> "$GITHUB_OUTPUT"
+            echo "mode=strict" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          if [ ! -f "$SKILL/SKILL.md" ]; then
-            echo "::error::$SKILL/SKILL.md not found"
-            exit 1
+
+          # Push: opted-in skills touched in this push range. Defensive
+          # fallbacks (consider every opted-in skill) when the range can't be
+          # resolved — safe because the version-is-new check makes publishing
+          # idempotent.
+          range_ok=true
+          if [ -z "${BEFORE_SHA:-}" ] || [[ "$BEFORE_SHA" =~ ^0+$ ]]; then
+            range_ok=false
+          elif ! git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null || ! git cat-file -e "$AFTER_SHA^{commit}" 2>/dev/null; then
+            range_ok=false
+          fi
+
+          targets=""
+          while IFS= read -r skill; do
+            [ -f "$skill/SKILL.md" ] || continue
+            if [ "$range_ok" = "false" ] || ! git diff --quiet "$BEFORE_SHA" "$AFTER_SHA" -- "$skill"; then
+              targets="$targets $skill"
+            fi
+          done <<<"$registry"
+
+          targets="${targets# }"
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+          echo "mode=skip-existing" >> "$GITHUB_OUTPUT"
+          if [ -z "$targets" ]; then
+            echo "No opted-in skills changed in this push; nothing to publish."
+          else
+            echo "Candidates: $targets"
           fi
 
       - name: Set up Node
+        if: steps.targets.outputs.targets != ''
         uses: actions/setup-node@v6
         with:
           node-version: '22'
 
-      - name: Extract version from skill frontmatter
-        id: version
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY' >> "$GITHUB_OUTPUT"
-          from pathlib import Path
-          import os
-          import re
-          import sys
-
-          skill = Path(os.environ['SKILL']) / 'SKILL.md'
-          text = skill.read_text(encoding='utf-8')
-          match = re.match(r'^---\n(.*?)\n---\n', text, re.S)
-          if not match:
-              print('::error::SKILL.md must start with YAML frontmatter containing version:', file=sys.stderr)
-              sys.exit(1)
-
-          version = None
-          for line in match.group(1).splitlines():
-              if re.match(r'^version\s*:', line):
-                  version = line.split(':', 1)[1].strip().strip('"\'')
-                  break
-
-          if not version:
-              print('::error::ClawHub publish requires a frontmatter field: version: x.y.z', file=sys.stderr)
-              sys.exit(1)
-
-          if not re.match(r'^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$', version):
-              print(f'::error::Invalid semver for ClawHub: {version}', file=sys.stderr)
-              sys.exit(1)
-
-          print(f'version={version}')
-          PY
-
       - name: Authenticate ClawHub CLI
+        if: steps.targets.outputs.targets != ''
         env:
           CLAW_TOKEN: ${{ secrets.CLAW_TOKEN }}
         shell: bash
@@ -95,78 +106,51 @@ jobs:
           npx -y clawhub@0.20.0 --no-input login --token "$CLAW_TOKEN"
           npx -y clawhub@0.20.0 --no-input whoami
 
-      - name: Ensure ClawHub version is new
+      - name: Publish targets
+        if: steps.targets.outputs.targets != ''
         env:
-          VERSION: ${{ steps.version.outputs.version }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          set +e
-          npx -y clawhub@0.20.0 --no-input inspect "$SKILL" --versions --limit 200 --json > /tmp/clawhub-existing.json 2>/tmp/clawhub-existing.err
-          rc=$?
-          set -e
-
-          if [ "$rc" -ne 0 ]; then
-            if grep -qi "Skill not found" /tmp/clawhub-existing.err /tmp/clawhub-existing.json 2>/dev/null; then
-              echo "Skill is not published yet; initial publish will create version $VERSION."
-              exit 0
-            fi
-            echo "::error::Could not inspect existing ClawHub versions"
-            cat /tmp/clawhub-existing.err || true
-            cat /tmp/clawhub-existing.json || true
-            exit "$rc"
-          fi
-
-          python3 - <<'PY'
-          import json
-          import os
-          import sys
-          from pathlib import Path
-
-          target = os.environ["VERSION"]
-          skill = os.environ["SKILL"]
-          raw = Path("/tmp/clawhub-existing.json").read_text(encoding="utf-8")
-          # clawhub may print progress lines before the JSON payload; strip them.
-          starts = [idx for idx in (raw.find("{"), raw.find("[")) if idx != -1]
-          if not starts:
-              print("::error::clawhub inspect did not return JSON", file=sys.stderr)
-              print(raw, file=sys.stderr)
-              sys.exit(1)
-
-          payload = raw[min(starts):]
-          try:
-              data = json.loads(payload)
-          except json.JSONDecodeError as exc:
-              print(f"::error::Could not parse clawhub inspect JSON: {exc}", file=sys.stderr)
-              print(payload, file=sys.stderr)
-              sys.exit(1)
-
-          if isinstance(data, dict):
-              version_items = data.get("versions") or []
-          elif isinstance(data, list):
-              version_items = data
-          else:
-              print(f"::error::Unexpected clawhub inspect JSON root: {type(data).__name__}", file=sys.stderr)
-              sys.exit(1)
-
-          versions = [item.get("version") for item in version_items if isinstance(item, dict)]
-          version_strings = [version for version in versions if isinstance(version, str) and version]
-          if target in version_strings:
-              print(f"::error::ClawHub version {target} already exists for {skill}. Bump version: in {skill}/SKILL.md before publishing.", file=sys.stderr)
-              sys.exit(1)
-          print(f"ClawHub version {target} is new. Existing versions: {', '.join(version_strings) or 'none'}")
-          PY
-
-      - name: Publish to ClawHub
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
+          TARGETS: ${{ steps.targets.outputs.targets }}
+          MODE: ${{ steps.targets.outputs.mode }}
           CHANGELOG: ${{ inputs.changelog }}
         shell: bash
         run: |
           set -euo pipefail
-          changelog="${CHANGELOG:-}"
-          if [ -z "$changelog" ]; then
-            changelog="Publish $SKILL $VERSION from $GITHUB_SHA"
-          fi
-          npx -y clawhub@0.20.0 --no-input skill publish "$SKILL" \
-            --slug "$SKILL" --version "$VERSION" --changelog "$changelog"
+          for SKILL in $TARGETS; do
+            VERSION="$(python3 .github/scripts/skill_frontmatter_version.py "$SKILL")"
+            export VERSION
+
+            set +e
+            npx -y clawhub@0.20.0 --no-input inspect "$SKILL" --versions --limit 200 --json > /tmp/clawhub-existing.json 2>/tmp/clawhub-existing.err
+            rc=$?
+            set -e
+
+            if [ "$rc" -ne 0 ]; then
+              if grep -qi "Skill not found" /tmp/clawhub-existing.err /tmp/clawhub-existing.json 2>/dev/null; then
+                state="new"
+              else
+                echo "::error::Could not inspect existing ClawHub versions for $SKILL"
+                cat /tmp/clawhub-existing.err || true
+                cat /tmp/clawhub-existing.json || true
+                exit "$rc"
+              fi
+            else
+              state="$(python3 .github/scripts/clawhub_version_state.py /tmp/clawhub-existing.json)"
+            fi
+
+            if [ "$state" = "exists" ]; then
+              if [ "$MODE" = "strict" ]; then
+                echo "::error::ClawHub version $VERSION already exists for $SKILL. Bump version: in $SKILL/SKILL.md before publishing."
+                exit 1
+              fi
+              echo "::notice::$SKILL $VERSION is already on ClawHub — skipping (bump version: in $SKILL/SKILL.md to ship a new release)."
+              continue
+            fi
+
+            changelog="${CHANGELOG:-}"
+            if [ -z "$changelog" ]; then
+              changelog="Publish $SKILL $VERSION from $GITHUB_SHA"
+            fi
+            npx -y clawhub@0.20.0 --no-input skill publish "$SKILL" \
+              --slug "$SKILL" --version "$VERSION" --changelog "$changelog"
+            echo "Published $SKILL@$VERSION"
+          done
