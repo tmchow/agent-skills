@@ -155,9 +155,10 @@ consequences:
 - **Adding a look** is a PR here: a new `references/styles/<name>.md` in the
   established format (prompt blocks, palette mapping, character treatment,
   labels, QA deltas), plus updating every enumeration of the look library
-  (SKILL.md description + body + references list, `character-builder.md`
-  interview + reserved names, the illo README "Looks" table, and the reserved
-  names above). New look names must not collide with any existing character
+  (SKILL.md body + references list, `character-builder.md` interview +
+  reserved names, the illo README "Looks" table, and the reserved names
+  above). The SKILL.md description states only the look *count* ("ten
+  bundled print looks") — bump the number, never enumerate names there. New look names must not collide with any existing character
   pack name in illo-characters' `index.json` — they become reserved both ways.
 - **No PR needed to experiment**: a custom style file at
   `~/.config/illo/styles/<name>.md` works immediately for that user; promote
