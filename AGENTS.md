@@ -129,6 +129,43 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 procedure from `SKILL.md` — that duplicates the agent doc and drifts. Keep the
 README to slow-changing metadata (purpose, prerequisites, install).
 
+## Scanner-safe skills (security and size budgets)
+
+Skills here install from a community source, so security scanners judge
+them at their most hostile reading — Hermes's `skills_guard` hard-blocks an
+install (no `--force` override) on patterns that merely *look* like
+exfiltration. These rules come from getting `illo` from a DANGEROUS verdict
+to SAFE; build new skills to them from the start:
+
+- **Never read secrets from the environment.** A community skill that reads
+  a secret-shaped env var (`*_API_KEY`, `*_TOKEN`, …) scans as a critical
+  exfiltration primitive regardless of what the code does with the value.
+  Resolve credentials as: CLI flag > user config file written by a
+  **user-run** `init` (hidden `getpass` prompt, file mode 600). When a
+  scanner flags a pattern, fix it by **removal, not renaming** — renaming a
+  variable to dodge the regex is scanner evasion, and scanners say so.
+- **Keep credentials out of frontmatter.** No `envVars:`-style declarations
+  for secrets; credential setup belongs in body text as something the user
+  runs themselves. Agents must not enter, paste, print, or store a user's
+  key.
+- **Budget the installed bundle: ≤ 1 MB total, no file over 256 KB.** Add a
+  `.skillignore` to exclude docs-only assets (calibration examples,
+  screenshots) and link them by raw GitHub URL from the references instead;
+  compress only what must ship.
+- **Re-verify any compressed asset that is a functional input — by running
+  it, on every backend.** Format support differs per provider: Azure's
+  image API rejects WebP reference images ("Only JPEG and PNG are
+  supported") while Google's and xAI's accept them. Prefer JPEG/PNG for
+  images sent to third-party APIs, and after recompressing, make the real
+  call against each supported model/provider and inspect the output — file
+  size and local rendering prove nothing about API acceptance or fidelity.
+- **Prefer stdlib over subprocess.** Scanners flag subprocess execution and
+  most uses have a stdlib equivalent (`webbrowser.open` instead of shelling
+  out to `open`/`xdg-open`).
+- **Pin every install command** quoted in docs or code
+  (`pip install 'PyYAML==6.0.2'`, `npx -y tool@1.2.3`) — unpinned installs
+  scan as supply-chain risk and drift anyway.
+
 ## License guidance
 
 Default new skills to `license: MIT` in frontmatter because the repository root
