@@ -3,10 +3,14 @@
 A personal, multi-skill collection of cross-platform AI agent skills
 (`SKILL.md` format), installable à la carte through runtime-specific lanes:
 the generic skills CLI (`npx skills add tmchow/agent-skills --skill <name>`,
-works across Claude Code/Cursor/Codex and other Agent-Skills runtimes),
-Hermes (raw `SKILL.md` URLs via `hermes skills install` or `/skills
-install`), and OpenClaw (ClawHub via `openclaw skills install <slug>`).
-Document lanes side by side; never present one as the only path.
+works across Claude Code/Cursor/Codex and other Agent-Skills runtimes), Hermes
+(GitHub directory identifiers via `hermes skills install owner/repo/path/to/skill`
+or `/skills install owner/repo/path/to/skill`; raw `SKILL.md` URLs are valid only
+for single-file fallback installs), and OpenClaw (ClawHub via
+`openclaw skills install <slug>`). The Hermes path segment is the exact skill
+directory relative to repo root — do not add `skills/` unless the skill actually
+lives under a `skills/` directory. Document lanes side by side; never present
+one as the only path.
 
 This guide is for anyone (human or agent) editing the repo. Keep it accurate
 when conventions change.
@@ -111,10 +115,12 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 - **Prerequisites** — external tools, accounts, or credentials the skill
   needs. This is the highest-value section; `SKILL.md` buries it.
 - Install commands for *this* skill: the generic skills-CLI one-liner
-  (`npx skills add tmchow/agent-skills --skill <name>`) first, then the Hermes
-  CLI/slash-command install and OpenClaw ClawHub install. If the ClawHub slug
-  is not known yet, mark it provisional and update it after publish before
-  merge.
+  (`npx skills add tmchow/agent-skills --skill <name>`) first, then Hermes
+  CLI/slash-command install and OpenClaw ClawHub install. For Hermes docs in
+  this repo, prefer the GitHub directory identifier (`owner/repo/path/to/skill`)
+  over a raw `SKILL.md` URL so multi-file skills install correctly. Use raw
+  `SKILL.md` URLs only as a single-file fallback. If the ClawHub slug is not
+  known yet, mark it provisional and update it after publish before merge.
 - A few capability bullets and a link to the upstream tool/API.
 - An explicit line: "SKILL.md is the agent-facing instructions; you don't
   need to read it to use the skill."
