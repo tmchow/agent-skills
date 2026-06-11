@@ -7,7 +7,9 @@ works across Claude Code/Cursor/Codex and other Agent-Skills runtimes), Hermes
 (GitHub directory identifiers via `hermes skills install owner/repo/path/to/skill`
 or `/skills install owner/repo/path/to/skill`; raw `SKILL.md` URLs are valid only
 for single-file fallback installs), and OpenClaw (ClawHub via
-`openclaw skills install <slug>`). Document lanes side by side; never present
+`openclaw skills install <slug>`). The Hermes path segment is the exact skill
+directory relative to repo root — do not add `skills/` unless the skill actually
+lives under a `skills/` directory. Document lanes side by side; never present
 one as the only path.
 
 This guide is for anyone (human or agent) editing the repo. Keep it accurate
