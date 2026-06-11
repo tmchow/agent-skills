@@ -17,13 +17,21 @@ when conventions change.
 
 ## Repo layout
 
+**Every top-level directory is a skill, identified by a `SKILL.md` inside it
+— with one exception: `_assets/`.** That's the rule installers use (they
+find skills by looking for `SKILL.md`), so anything that isn't a skill must
+not look like one at the root.
+
 - `<skill-name>/SKILL.md` — required. The agent-facing instructions.
 - `<skill-name>/README.md` — required. The human-facing landing page (below).
 - `<skill-name>/references/` — optional. Deep material loaded on demand.
-- `<skill-name>-examples/` — optional, top level. Docs-only images a skill
-  links by raw URL (e.g. `illo-examples/`). Kept **outside** the skill
-  directory because installers copy the entire skill directory verbatim —
-  anything inside it ships to every user.
+- `_assets/<skill-name>/` — optional. Docs-only images a skill links by raw
+  URL (calibration examples, README embeds). Two reasons it lives here, not
+  in the skill dir: installers copy the entire skill directory verbatim, so
+  anything inside ships to every user; and the leading `_` is an impossible
+  skill-name start (`[a-z0-9-]`), so it can never be mistaken for a skill.
+  Namespace by skill (`_assets/illo/...`) so it scales without cluttering
+  the root.
 - Root `README.md` — the catalog: one row per skill.
 - Root `LICENSE` — MIT.
 
