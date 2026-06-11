@@ -1,0 +1,181 @@
+name: Publish a skill to ClawHub
+
+# On-demand only, by design: publishing is a deliberate act, gated on
+# .github/clawhub-publishable.txt so not every skill in the repo is eligible.
+on:
+  workflow_dispatch:
+    inputs:
+      skill:
+        description: "Skill directory to publish (must be listed in .github/clawhub-publishable.txt)"
+        required: true
+        type: string
+      changelog:
+        description: "Changelog text (default: 'Publish <skill> <version> from <sha>')"
+        required: false
+        type: string
+        default: ""
+      clawscan-note:
+        description: "Optional note for ClawHub's scanner (e.g. why the skill instructs running a CLI)"
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  publish:
+    name: Publish ${{ inputs.skill }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      SKILL: ${{ inputs.skill }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Gate on the publishable list
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -Fxq "$SKILL" .github/clawhub-publishable.txt; then
+            echo "::error::'$SKILL' is not listed in .github/clawhub-publishable.txt — add it there (via PR) before publishing."
+            exit 1
+          fi
+          if [ ! -f "$SKILL/SKILL.md" ]; then
+            echo "::error::$SKILL/SKILL.md not found"
+            exit 1
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Extract version from skill frontmatter
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          from pathlib import Path
+          import os
+          import re
+          import sys
+
+          skill = Path(os.environ['SKILL']) / 'SKILL.md'
+          text = skill.read_text(encoding='utf-8')
+          match = re.match(r'^---\n(.*?)\n---\n', text, re.S)
+          if not match:
+              print('::error::SKILL.md must start with YAML frontmatter containing version:', file=sys.stderr)
+              sys.exit(1)
+
+          version = None
+          for line in match.group(1).splitlines():
+              if re.match(r'^version\s*:', line):
+                  version = line.split(':', 1)[1].strip().strip('"\'')
+                  break
+
+          if not version:
+              print('::error::ClawHub publish requires a frontmatter field: version: x.y.z', file=sys.stderr)
+              sys.exit(1)
+
+          if not re.match(r'^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$', version):
+              print(f'::error::Invalid semver for ClawHub: {version}', file=sys.stderr)
+              sys.exit(1)
+
+          print(f'version={version}')
+          PY
+
+      - name: Authenticate ClawHub CLI
+        env:
+          CLAW_TOKEN: ${{ secrets.CLAW_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${CLAW_TOKEN:-}" ]; then
+            echo "::error::Missing CLAW_TOKEN repository secret"
+            exit 1
+          fi
+          npx -y clawhub@0.18.0 --no-input login --token "$CLAW_TOKEN"
+          npx -y clawhub@0.18.0 --no-input whoami
+
+      - name: Ensure ClawHub version is new
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          npx -y clawhub@0.18.0 --no-input inspect "$SKILL" --versions --limit 200 --json > /tmp/clawhub-existing.json 2>/tmp/clawhub-existing.err
+          rc=$?
+          set -e
+
+          if [ "$rc" -ne 0 ]; then
+            if grep -qi "Skill not found" /tmp/clawhub-existing.err /tmp/clawhub-existing.json 2>/dev/null; then
+              echo "Skill is not published yet; initial publish will create version $VERSION."
+              exit 0
+            fi
+            echo "::error::Could not inspect existing ClawHub versions"
+            cat /tmp/clawhub-existing.err || true
+            cat /tmp/clawhub-existing.json || true
+            exit "$rc"
+          fi
+
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          target = os.environ["VERSION"]
+          skill = os.environ["SKILL"]
+          raw = Path("/tmp/clawhub-existing.json").read_text(encoding="utf-8")
+          # clawhub may print progress lines before the JSON payload; strip them.
+          starts = [idx for idx in (raw.find("{"), raw.find("[")) if idx != -1]
+          if not starts:
+              print("::error::clawhub inspect did not return JSON", file=sys.stderr)
+              print(raw, file=sys.stderr)
+              sys.exit(1)
+
+          payload = raw[min(starts):]
+          try:
+              data = json.loads(payload)
+          except json.JSONDecodeError as exc:
+              print(f"::error::Could not parse clawhub inspect JSON: {exc}", file=sys.stderr)
+              print(payload, file=sys.stderr)
+              sys.exit(1)
+
+          if isinstance(data, dict):
+              version_items = data.get("versions") or []
+          elif isinstance(data, list):
+              version_items = data
+          else:
+              print(f"::error::Unexpected clawhub inspect JSON root: {type(data).__name__}", file=sys.stderr)
+              sys.exit(1)
+
+          versions = [item.get("version") for item in version_items if isinstance(item, dict)]
+          version_strings = [version for version in versions if isinstance(version, str) and version]
+          if target in version_strings:
+              print(f"::error::ClawHub version {target} already exists for {skill}. Bump version: in {skill}/SKILL.md before publishing.", file=sys.stderr)
+              sys.exit(1)
+          print(f"ClawHub version {target} is new. Existing versions: {', '.join(version_strings) or 'none'}")
+          PY
+
+      - name: Publish to ClawHub
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          CHANGELOG: ${{ inputs.changelog }}
+          CLAWSCAN_NOTE: ${{ inputs.clawscan-note }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          changelog="${CHANGELOG:-}"
+          if [ -z "$changelog" ]; then
+            changelog="Publish $SKILL $VERSION from $GITHUB_SHA"
+          fi
+          args=(--no-input skill publish "$SKILL" --slug "$SKILL" --version "$VERSION" --changelog "$changelog")
+          if [ -n "${CLAWSCAN_NOTE:-}" ]; then
+            args+=(--clawscan-note "$CLAWSCAN_NOTE")
+          fi
+          npx -y clawhub@0.18.0 "${args[@]}"

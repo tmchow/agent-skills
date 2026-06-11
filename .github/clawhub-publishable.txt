@@ -1,0 +1,8 @@
+# Skills eligible for ClawHub publishing via the publish-clawhub workflow.
+# One skill directory name per line. A skill NOT listed here cannot be
+# published, even by a maintainer dispatching the workflow — add it here
+# (via PR) first.
+camofox-cloaked-browser
+chrome-devtools-axi
+clawpatch
+illo

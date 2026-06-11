@@ -261,6 +261,27 @@ consequences:
   `~/.config/illo/styles/<name>.md` works immediately for that user; promote
   it here once it proves out.
 
+## Publishing to ClawHub
+
+Publishing is **on-demand only** — the `Publish a skill to ClawHub` workflow
+(`.github/workflows/publish-clawhub.yml`) runs via manual dispatch, never on
+push. It is double-gated:
+
+1. The skill must be listed in `.github/clawhub-publishable.txt` (one
+   directory name per line). Not every skill in this repo is eligible; add a
+   skill to the list via PR before its first publish.
+2. The version in the skill's `SKILL.md` frontmatter must be **new** on
+   ClawHub — the workflow checks existing versions and refuses a republish,
+   so bump `version:` before dispatching.
+
+Auth comes from the `CLAW_TOKEN` repository secret (a ClawHub API token).
+Dispatch inputs: `skill` (required), `changelog` (optional, defaults to a
+sha-stamped message), and `clawscan-note` (optional context for ClawHub's
+scanner — use it for CLI-wrapper skills that instruct agents to run
+binaries). After a skill's **first** publish, update its README's
+provisional ClawHub slug line and the root catalog (per the per-skill README
+rules above).
+
 ## Validate before committing
 
 - Frontmatter parses as valid YAML.
