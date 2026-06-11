@@ -144,10 +144,18 @@ to SAFE; build new skills to them from the start:
 - **Never read secrets from the environment.** A community skill that reads
   a secret-shaped env var (`*_API_KEY`, `*_TOKEN`, …) scans as a critical
   exfiltration primitive regardless of what the code does with the value.
-  Resolve credentials as: CLI flag > user config file written by a
-  **user-run** `init` (hidden `getpass` prompt, file mode 600). When a
-  scanner flags a pattern, fix it by **removal, not renaming** — renaming a
-  variable to dodge the regex is scanner evasion, and scanners say so.
+  Hermes's `required_environment_variables` frontmatter (Secure Setup on
+  Load) does **not** exempt the read: as of June 2026 its scanner flags the
+  `os.environ.get` even when the variable is declared (tested — verdict
+  DANGEROUS, install blocked). Revisit only if the guard becomes
+  declaration-aware. When a scanner flags a pattern, fix it by **removal,
+  not renaming** — renaming a variable (or switching to a synonym API) to
+  dodge the regex is scanner evasion, and scanners say so.
+- **Don't take secrets as CLI flags either.** Command-line arguments leak
+  into process listings, shell history, and agent transcripts. The one
+  scan-clean credential channel is a config file written by a **user-run**
+  `init` (hidden `getpass` prompt, file mode 600) — runtime-agnostic, since
+  every runtime shares the user's home.
 - **Keep credentials out of frontmatter.** No `envVars:`-style declarations
   for secrets; credential setup belongs in body text as something the user
   runs themselves. Agents must not enter, paste, print, or store a user's
