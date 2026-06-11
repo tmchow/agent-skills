@@ -275,10 +275,8 @@ push. It is double-gated:
    so bump `version:` before dispatching.
 
 Auth comes from the `CLAW_TOKEN` repository secret (a ClawHub API token).
-Dispatch inputs: `skill` (required), `changelog` (optional, defaults to a
-sha-stamped message), and `clawscan-note` (optional context for ClawHub's
-scanner — use it for CLI-wrapper skills that instruct agents to run
-binaries). After a skill's **first** publish, update its README's
+Dispatch inputs: `skill` (required) and `changelog` (optional, defaults to
+a sha-stamped message). After a skill's **first** publish, update its README's
 provisional ClawHub slug line and the root catalog (per the per-skill README
 rules above).
 

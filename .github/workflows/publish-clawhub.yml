@@ -14,11 +14,6 @@ on:
         required: false
         type: string
         default: ""
-      clawscan-note:
-        description: "Optional note for ClawHub's scanner (e.g. why the skill instructs running a CLI)"
-        required: false
-        type: string
-        default: ""
 
 jobs:
   publish:
@@ -97,8 +92,8 @@ jobs:
             echo "::error::Missing CLAW_TOKEN repository secret"
             exit 1
           fi
-          npx -y clawhub@0.18.0 --no-input login --token "$CLAW_TOKEN"
-          npx -y clawhub@0.18.0 --no-input whoami
+          npx -y clawhub@0.20.0 --no-input login --token "$CLAW_TOKEN"
+          npx -y clawhub@0.20.0 --no-input whoami
 
       - name: Ensure ClawHub version is new
         env:
@@ -107,7 +102,7 @@ jobs:
         run: |
           set -euo pipefail
           set +e
-          npx -y clawhub@0.18.0 --no-input inspect "$SKILL" --versions --limit 200 --json > /tmp/clawhub-existing.json 2>/tmp/clawhub-existing.err
+          npx -y clawhub@0.20.0 --no-input inspect "$SKILL" --versions --limit 200 --json > /tmp/clawhub-existing.json 2>/tmp/clawhub-existing.err
           rc=$?
           set -e
 
@@ -166,7 +161,6 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           CHANGELOG: ${{ inputs.changelog }}
-          CLAWSCAN_NOTE: ${{ inputs.clawscan-note }}
         shell: bash
         run: |
           set -euo pipefail
@@ -174,8 +168,5 @@ jobs:
           if [ -z "$changelog" ]; then
             changelog="Publish $SKILL $VERSION from $GITHUB_SHA"
           fi
-          args=(--no-input skill publish "$SKILL" --slug "$SKILL" --version "$VERSION" --changelog "$changelog")
-          if [ -n "${CLAWSCAN_NOTE:-}" ]; then
-            args+=(--clawscan-note "$CLAWSCAN_NOTE")
-          fi
-          npx -y clawhub@0.18.0 "${args[@]}"
+          npx -y clawhub@0.20.0 --no-input skill publish "$SKILL" \
+            --slug "$SKILL" --version "$VERSION" --changelog "$changelog"
