@@ -269,6 +269,31 @@ consequences:
   `~/.config/illo/styles/<name>.md` works immediately for that user; promote
   it here once it proves out.
 
+## Publishing to ClawHub
+
+ClawHub publishing is **opt-in per skill, automatic per merge**. The
+registry is `.github/clawhub-publishable.txt` — one directory name per line,
+living beside the publish workflow on purpose (one file to read to know what
+ships). A skill is published if and only if it is listed there; opting in is
+a deliberate act done via PR.
+
+- **On merge to main**, `.github/workflows/publish-clawhub.yml` publishes
+  every opted-in skill the push touched — but only when the skill's
+  `SKILL.md` `version:` is **new** on ClawHub. A touched skill without a
+  version bump is skipped quietly (docs-only merges stay green); bump
+  `version:` in the same PR whenever a change should ship.
+- **Manual dispatch** publishes one named skill and is strict: an
+  already-published version fails loudly. Use it for first publishes and
+  re-runs. Inputs: `skill` (required), `changelog` (optional, defaults to a
+  sha-stamped message).
+- Auth comes from the `CLAW_TOKEN` repository secret (a ClawHub API token).
+
+**Consistency rule:** a skill whose README documents the OpenClaw install
+lane should be opted into the registry, and every registry entry's README
+should document that lane — the two lists must not drift apart. After a
+skill's **first** publish, replace its README's provisional ClawHub slug
+note and update the root catalog (per the per-skill README rules above).
+
 ## Validate before committing
 
 - Frontmatter parses as valid YAML.

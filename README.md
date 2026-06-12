@@ -29,17 +29,18 @@ npx skills add tmchow/agent-skills --skill illo
 
 ### Hermes
 
-Hermes can install a skill directly from a `SKILL.md` URL:
+Hermes installs by `owner/repo/skill` identifier (a direct `SKILL.md` URL
+also works):
 
 ```bash
-hermes skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/camofox-cloaked-browser/SKILL.md
-hermes skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/clawpatch/SKILL.md
+hermes skills install tmchow/agent-skills/camofox-cloaked-browser
+hermes skills install tmchow/agent-skills/clawpatch
 ```
 
 From an interactive Hermes CLI session, use the slash command equivalent:
 
 ```text
-/skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/camofox-cloaked-browser/SKILL.md
+/skills install tmchow/agent-skills/camofox-cloaked-browser
 /reload-skills
 /skill camofox-cloaked-browser
 ```

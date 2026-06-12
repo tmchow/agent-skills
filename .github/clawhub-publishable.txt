@@ -1,0 +1,9 @@
+# ClawHub publish registry — one skill directory per line.
+# Listing here is the explicit opt-in: merges to main auto-publish a listed
+# skill when its SKILL.md version is new on ClawHub; unlisted skills are
+# never published, even by manual dispatch. Lives beside the publish
+# workflow on purpose: one file to read to know what ships.
+camofox-cloaked-browser
+chrome-devtools-axi
+clawpatch
+illo
