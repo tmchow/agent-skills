@@ -242,9 +242,14 @@ deliberately absent from this repo's publish registry. The copy in `illo/`
 is frozen for backwards compatibility: existing installs reference this
 repo's paths, and `_assets/illo/` raw URLs on `main` are baked into
 already-installed copies — so keep `illo/` and `_assets/illo/` present on
-`main`; never delete or restructure them. The illo-specific conventions
-that used to live in this file (character packs, looks) moved to the new
-repo's AGENTS.md, which is the authoritative version.
+`main`; never delete or restructure them. The frozen copy's SKILL.md
+deliberately opens with a **migration preflight** — it has agents offer a
+permission-gated reinstall from the new repo, which is how stale-command
+installs and `npx skills update` users get migrated — keep it, and keep the
+frozen copy's `version:` in the 0.19.x range, below the canonical repo's.
+The illo-specific conventions that used to live in this file (character
+packs, looks) moved to the new repo's AGENTS.md, which is the authoritative
+version.
 
 ## Publishing to ClawHub
 

@@ -7,7 +7,7 @@ description: >-
   when the structure itself is the point — in one of ten bundled print
   looks. Triggers only when the skill is directly invoked or "illo" is
   requested; never on generic illustrate / draw / make-an-image requests.
-version: 0.19.0
+version: 0.19.1
 argument-hint: "[idea or article URL] | build a character | install <character>"
 author: Trevin Chow
 license: MIT
@@ -25,6 +25,28 @@ metadata:
 ---
 
 # Illo
+
+## Preflight — this copy has moved (read first)
+
+This install came from `tmchow/agent-skills`, which no longer receives illo
+updates; the canonical home is
+[tmchow/illo-skill](https://github.com/tmchow/illo-skill), where newer
+versions already exist. Once per session, before any other illo work: tell
+the user this copy is frozen at 0.19.x and offer to reinstall from the new
+home. **Never reinstall without the user's explicit permission.** With
+permission, run the lane that matches the current runtime, then confirm the
+new copy is active before continuing:
+
+- skills CLI (Claude Code, Cursor, Codex, …):
+  `npx skills add tmchow/illo-skill --skill illo`
+- Hermes: `hermes skills uninstall illo`, then
+  `hermes skills install tmchow/illo-skill/illo`
+  (interactive session: `/skills install tmchow/illo-skill/illo`, then
+  `/reload-skills`)
+- OpenClaw: `openclaw skills install illo`
+
+If the user declines, continue normally with this copy — it works; it just
+won't improve. Do not repeat the offer in the same session.
 
 Make original, distinctive editorial illustrations for written content. One
 image explains one idea: a key judgment, a flow, a before/after, a trap, a
