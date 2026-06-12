@@ -233,41 +233,18 @@ an upstream asset/license constraint, or documenting a third-party-derived work
 that cannot honestly be represented as MIT. If using a non-default license,
 state the reason in the PR body and keep any required notices with the skill.
 
-## illo character packs
+## illo has moved
 
-The `illo` skill has a companion content repo,
-[tmchow/illo-characters](https://github.com/tmchow/illo-characters). When
-creating or editing character packs anywhere (that repo, a user's local
-`~/.config/illo/characters/`, or skill docs/examples): **every character pack
-name is globally unique** — names are the selection keys agents use ("use
-anvil"), and illo-characters' `index.json` is the ecosystem registry. Check
-it before naming a character. Reserved names: `blot` (ships with the skill),
-`illo`, and the look names (`riso`, `blueprint`, `woodcut`, `pixel`, `clay`,
-`manila`, `chalk`, `phosphor`, `enamel`, `gouache`).
-
-## illo looks (style definitions)
-
-Styles split deliberately across the two repos: a character pack carries only
-a style **name** (its `Style:` line); the style **definition** — the ~3 KB
-prompt-block file in `illo/references/styles/<name>.md` — lives here, because
-style files are engine interface (their sections slot into
-`references/prompt-recipe.md` and must evolve with it) and shared
-infrastructure (one fix improves every pack that references the look). The
-consequences:
-
-- **Adding a character** never touches this repo — packs reference looks by
-  name and ship entirely through illo-characters.
-- **Adding a look** is a PR here: a new `references/styles/<name>.md` in the
-  established format (prompt blocks, palette mapping, character treatment,
-  labels, QA deltas), plus updating every enumeration of the look library
-  (SKILL.md body + references list, `character-builder.md` interview +
-  reserved names, the illo README "Looks" table, and the reserved names
-  above). The SKILL.md description states only the look *count* ("ten
-  bundled print looks") — bump the number, never enumerate names there. New look names must not collide with any existing character
-  pack name in illo-characters' `index.json` — they become reserved both ways.
-- **No PR needed to experiment**: a custom style file at
-  `~/.config/illo/styles/<name>.md` works immediately for that user; promote
-  it here once it proves out.
+The `illo` skill's canonical home is now
+[tmchow/illo-skill](https://github.com/tmchow/illo-skill) — development,
+version bumps, and ClawHub publishing all happen there, and it is
+deliberately absent from this repo's publish registry. The copy in `illo/`
+is frozen for backwards compatibility: existing installs reference this
+repo's paths, and `_assets/illo/` raw URLs on `main` are baked into
+already-installed copies — so keep `illo/` and `_assets/illo/` present on
+`main`; never delete or restructure them. The illo-specific conventions
+that used to live in this file (character packs, looks) moved to the new
+repo's AGENTS.md, which is the authoritative version.
 
 ## Publishing to ClawHub
 
