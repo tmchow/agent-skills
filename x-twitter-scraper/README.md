@@ -22,11 +22,28 @@ public text.
 npx -y skills@1.5.3 add tmchow/agent-skills --skill x-twitter-scraper
 ```
 
+### Hermes
+
+```bash
+hermes skills install tmchow/agent-skills/x-twitter-scraper
+```
+
+From a Hermes chat, use the matching slash command:
+
+```text
+/skills install tmchow/agent-skills/x-twitter-scraper
+```
+
 ### OpenClaw
 
-This skill is not listed in this repo's ClawHub publish registry yet. Use the
-generic Agent Skills install path, or have the maintainer opt it into
-`.github/clawhub-publishable.txt` before publishing it to ClawHub.
+The provisional ClawHub slug is `x-twitter-scraper`. After this repo opts the
+skill into `.github/clawhub-publishable.txt` and publishes it, install it with:
+
+```bash
+openclaw skills install x-twitter-scraper
+```
+
+Until then, use the generic Agent Skills install path above.
 
 ## Capabilities
 
