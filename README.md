@@ -24,7 +24,7 @@ skills and which of your agents to install them into (Claude Code, Cursor,
 Codex, …). To install one skill directly, name it:
 
 ```bash
-npx skills add tmchow/agent-skills --skill illo
+npx skills add tmchow/agent-skills --skill clawpatch
 ```
 
 ### Hermes
@@ -74,7 +74,7 @@ instructions.
 | [`camofox-cloaked-browser`](camofox-cloaked-browser/) | Use [Camofox/Camoufox](https://github.com/jo-inc/camofox-browser) selectively for cloaked browser automation — npm/npx startup, OpenClaw plugin tools, raw REST commands, session/tab workflow, environment variables, process-scoped Hermes `CAMOFOX_URL`, and snapshot-after-action discipline. |
 | [`chrome-devtools-axi`](chrome-devtools-axi/) | Drive [`chrome-devtools-axi`](https://github.com/kunchenguid/chrome-devtools-axi) for Chrome DevTools Protocol browser automation — compact accessibility snapshots, stale-ref-safe refs, page interaction, console/network inspection, screenshots, Lighthouse, and performance traces. |
 | [`clawpatch`](clawpatch/) | Drive the [Clawpatch](https://clawpatch.ai) CLI for automated AI code review and per-finding fixes — scanner-only subagent dispatch (parallel) or full-cycle `clawpatch fix` loops, with wire-format JSON parsing, mode selection, and exit-code/pitfall handling. |
-| [`illo`](illo/) | Generate original print-style editorial illustrations for articles and blogs, starring a recurring mascot that performs each idea — each character pack carries one of ten bundled looks (riso, blueprint, woodcut, pixel, clay, manila, chalk, phosphor, enamel, gouache) or a custom style — default **Blot** (a deadpan ink-drop), or design your own with the built-in character builder and install it as a character pack. One-metaphor-per-image scenes with named + custom + derived palettes and reference-image character consistency. Calls OpenRouter's image API directly (model-selectable: Grok Imagine, Nano Banana 2/Pro, GPT-5.4 Image 2, …). **Website:** [illo-skill.com](https://illo-skill.com) |
+| [`illo`](https://github.com/tmchow/illo-skill) | **Moved to its own repo: [tmchow/illo-skill](https://github.com/tmchow/illo-skill)** — install with `npx skills add tmchow/illo-skill --skill illo` (a frozen copy stays in [`illo/`](illo/) so existing installs keep working, but new versions ship only from the new repo). Generate original print-style editorial illustrations for articles and blogs, starring a recurring mascot that performs each idea. **Website:** [illo-skill.com](https://illo-skill.com) |
 
 ## Layout
 

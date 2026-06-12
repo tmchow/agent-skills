@@ -1,5 +1,10 @@
 # Illo
 
+> **📦 This skill has moved to [tmchow/illo-skill](https://github.com/tmchow/illo-skill).**
+> This copy is frozen so existing installs keep working, but new versions
+> ship only from the new repo — install from there:
+> `npx skills add tmchow/illo-skill --skill illo`
+
 Turn a concept or an article into original **editorial illustrations** —
 flat, bold-lined print-style scenes where a recurring mascot performs the
 idea. One image says one thing: a key judgment, a flow, a before/after, a
@@ -167,7 +172,7 @@ Worth knowing:
 ### Any agent (skills CLI)
 
 ```bash
-npx skills add tmchow/agent-skills --skill illo
+npx skills add tmchow/illo-skill --skill illo
 ```
 
 One command for Claude Code, Cursor, Codex, and the other runtimes the
@@ -177,13 +182,13 @@ and asks which agents to install it into.
 ### Hermes
 
 ```bash
-hermes skills install tmchow/agent-skills/illo
+hermes skills install tmchow/illo-skill/illo
 ```
 
 From an interactive Hermes session:
 
 ```text
-/skills install tmchow/agent-skills/illo
+/skills install tmchow/illo-skill/illo
 /reload-skills
 /skill illo
 ```
@@ -197,9 +202,6 @@ From an interactive Hermes session:
 ```bash
 openclaw skills install illo
 ```
-
-> ClawHub slug is provisional until first publish — update this line and the
-> root catalog once the skill is published.
 
 ## Use it for
 
