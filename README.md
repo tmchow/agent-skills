@@ -75,6 +75,7 @@ instructions.
 | [`chrome-devtools-axi`](chrome-devtools-axi/) | Drive [`chrome-devtools-axi`](https://github.com/kunchenguid/chrome-devtools-axi) for Chrome DevTools Protocol browser automation — compact accessibility snapshots, stale-ref-safe refs, page interaction, console/network inspection, screenshots, Lighthouse, and performance traces. |
 | [`clawpatch`](clawpatch/) | Drive the [Clawpatch](https://clawpatch.ai) CLI for automated AI code review and per-finding fixes — scanner-only subagent dispatch (parallel) or full-cycle `clawpatch fix` loops, with wire-format JSON parsing, mode selection, and exit-code/pitfall handling. |
 | [`illo`](https://github.com/tmchow/illo-skill) | **Moved to its own repo: [tmchow/illo-skill](https://github.com/tmchow/illo-skill)** — install with `npx skills add tmchow/illo-skill --skill illo` (a frozen copy stays in [`illo/`](illo/) so existing installs keep working, but new versions ship only from the new repo). Generate original print-style editorial illustrations for articles and blogs, starring a recurring mascot that performs each idea. **Website:** [illo-skill.com](https://illo-skill.com) |
+| [`tweetclaw`](tweetclaw/) | Operate the [TweetClaw](https://github.com/Xquik-dev/tweetclaw) OpenClaw plugin for reviewed X/Twitter reads, posts, media workflows, monitors, webhooks, giveaway draws, and account-scoped actions through Xquik. |
 
 ## Layout
 
