@@ -30,8 +30,7 @@ not look like one at the root.
   in the skill dir: installers copy the entire skill directory verbatim, so
   anything inside ships to every user; and the leading `_` is an impossible
   skill-name start (`[a-z0-9-]`), so it can never be mistaken for a skill.
-  Namespace by skill (`_assets/illo/...`) so it scales without cluttering
-  the root.
+  Namespace by skill so it scales without cluttering the root.
 - Root `README.md` — the catalog: one row per skill.
 - Root `LICENSE` — MIT.
 
@@ -126,8 +125,10 @@ It is **not** the agent instructions — that's `SKILL.md`. Include:
 - One-paragraph what-it-is, in human framing.
 - **Prerequisites** — external tools, accounts, or credentials the skill
   needs. This is the highest-value section; `SKILL.md` buries it.
-- Install commands for *this* skill: the generic skills-CLI one-liner
-  (`npx skills add tmchow/agent-skills --skill <name>`) first, then Hermes
+- Install commands for *this* skill: include the generic skills-CLI one-liner
+  (`npx skills add tmchow/agent-skills --skill <name>`) in every skill
+  README, not just the root catalog, and put it first. Include the optional
+  global variant (`--global`) when useful. Then document Hermes
   CLI/slash-command install and OpenClaw ClawHub install. For Hermes docs in
   this repo, prefer the GitHub directory identifier (`owner/repo/path/to/skill`)
   over a raw `SKILL.md` URL so multi-file skills install correctly. Use raw
@@ -146,8 +147,7 @@ README to slow-changing metadata (purpose, prerequisites, install).
 Skills here install from a community source, so security scanners judge
 them at their most hostile reading — Hermes's `skills_guard` hard-blocks an
 install (no `--force` override) on patterns that merely *look* like
-exfiltration. These rules come from getting `illo` from a DANGEROUS verdict
-to SAFE; build new skills to them from the start:
+exfiltration. Build new skills to these rules from the start:
 
 - **Never read secrets from the environment.** A community skill that reads
   a secret-shaped env var (`*_API_KEY`, `*_TOKEN`, …) scans as a critical
@@ -177,7 +177,7 @@ to SAFE; build new skills to them from the start:
   workspace env. Keep the skill's *code* env-free anyway, and put the
   bridge in the environment's setup hook (Codex setup script, devcontainer
   `postCreateCommand`, a CI step): a one-liner that materializes the config
-  file from the workspace secret (see illo's README, "Cloud & CI"). Scanned
+  file from the workspace secret. Scanned
   prose documenting that shell one-liner passes `skills_guard` — the
   exfiltration patterns target code reads (`os.environ`, `printenv`,
   curl/wget interpolation), not a `printf` redirect in docs. The consent
@@ -211,18 +211,12 @@ to SAFE; build new skills to them from the start:
 - **Binary assets need a Hermes repair preflight.** Some Hermes versions
   corrupt binary files (images, fonts, models) when installing multi-file
   skills from GitHub — binaries get decoded as text; text files survive.
-  The pattern (see illo): a generated manifest `assets/checksums.txt`
-  (`<sha256>  <pin-commit>  <relpath>`, written by
-  `.github/scripts/regen_asset_checksums.py`, kept current automatically by
-  the `asset-checksums` workflow — PRs touching assets get the regenerated
-  manifest committed back to their branch); a generic, never-edited
-  `scripts/repair-hermes-assets.sh` that verifies each asset and re-downloads
-  mismatches from the immutable raw URL its pin commit implies; a magic-byte
-  check in the engine's preflight (`doctor`) so *every* runtime detects
-  corruption; and a SKILL.md section scoping the repair run to Hermes Agent
-  only (`bash ${HERMES_SKILL_DIR}/scripts/repair-hermes-assets.sh`). The
-  script is checksum-gated, so it's harmless anywhere. **Remove the preflight
-  once Hermes ships its installer fix** — the detection in `doctor` can stay.
+  If a future skill ships binary assets, add a generated checksum manifest,
+  a workflow that keeps it current, a repair script that verifies and
+  re-downloads mismatches from immutable raw URLs, and a magic-byte check in
+  the engine's preflight (`doctor`) so every runtime detects corruption.
+  Scope repair instructions to Hermes Agent only. Remove the repair preflight
+  once Hermes ships its installer fix; the detection can stay.
 
 ## License guidance
 
@@ -232,24 +226,6 @@ clear reason, such as intentionally removing attribution requirements, matching
 an upstream asset/license constraint, or documenting a third-party-derived work
 that cannot honestly be represented as MIT. If using a non-default license,
 state the reason in the PR body and keep any required notices with the skill.
-
-## illo has moved
-
-The `illo` skill's canonical home is now
-[tmchow/illo-skill](https://github.com/tmchow/illo-skill) — development,
-version bumps, and ClawHub publishing all happen there, and it is
-deliberately absent from this repo's publish registry. The copy in `illo/`
-is frozen for backwards compatibility: existing installs reference this
-repo's paths, and `_assets/illo/` raw URLs on `main` are baked into
-already-installed copies — so keep `illo/` and `_assets/illo/` present on
-`main`; never delete or restructure them. The frozen copy's SKILL.md
-deliberately opens with a **migration preflight** — it has agents offer a
-permission-gated reinstall from the new repo, which is how stale-command
-installs and `npx skills update` users get migrated — keep it, and keep the
-frozen copy's `version:` in the 0.19.x range, below the canonical repo's.
-The illo-specific conventions that used to live in this file (character
-packs, looks) moved to the new repo's AGENTS.md, which is the authoritative
-version.
 
 ## Publishing to ClawHub
 

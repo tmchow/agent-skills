@@ -42,6 +42,14 @@ either is missing.
 
 ## Install
 
+Install only this skill from the repo:
+
+```bash
+npx skills add tmchow/agent-skills --skill clawpatch
+```
+
+Add `--global` to install it at the user level instead of the current project:
+
 ```bash
 npx skills add tmchow/agent-skills --skill clawpatch --global
 ```
