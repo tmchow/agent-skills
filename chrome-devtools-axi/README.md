@@ -13,6 +13,20 @@ No API key is required. `CHROME_DEVTOOLS_AXI_WS_HEADERS` can contain secrets for
 
 ## Install
 
+### Any Agent Skills runtime (skills CLI)
+
+Install only this skill from the repo:
+
+```bash
+npx skills add tmchow/agent-skills --skill chrome-devtools-axi
+```
+
+Add `--global` to install it at the user level instead of the current project:
+
+```bash
+npx skills add tmchow/agent-skills --skill chrome-devtools-axi --global
+```
+
 ### Hermes
 
 ```bash
@@ -37,9 +51,9 @@ openclaw skills install chrome-devtools-axi
 
 ClawHub page, after publish: https://clawhub.ai/tmchow/chrome-devtools-axi
 
-### CLI
+### Upstream CLI
 
-Use `npx` for one-off browser work:
+The skill teaches agents how to use the upstream CLI. For one-off browser work:
 
 ```bash
 npx -y chrome-devtools-axi --help

@@ -11,20 +11,34 @@ This skill is intentionally **npm-first**. It does not include a container workf
 - curl for raw REST examples
 - Optional: OpenClaw with the upstream `@askjo/camofox-browser` plugin installed
 
-## Install this skill
+## Install This Skill
+
+### Any Agent Skills runtime (skills CLI)
+
+Install only this skill from the repo:
+
+```bash
+npx skills add tmchow/agent-skills --skill camofox-cloaked-browser
+```
+
+Add `--global` to install it at the user level instead of the current project:
+
+```bash
+npx skills add tmchow/agent-skills --skill camofox-cloaked-browser --global
+```
 
 ### Hermes
 
-Install from the raw `SKILL.md` URL:
+Install from the GitHub directory identifier:
 
 ```bash
-hermes skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/camofox-cloaked-browser/SKILL.md
+hermes skills install tmchow/agent-skills/camofox-cloaked-browser
 ```
 
 From an interactive Hermes CLI session, use the slash command path:
 
 ```text
-/skills install https://raw.githubusercontent.com/tmchow/agent-skills/main/camofox-cloaked-browser/SKILL.md
+/skills install tmchow/agent-skills/camofox-cloaked-browser
 /reload-skills
 /skill camofox-cloaked-browser
 ```
