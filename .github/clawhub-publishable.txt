@@ -6,3 +6,4 @@
 camofox-cloaked-browser
 chrome-devtools-axi
 clawpatch
+vhs-terminal-recorder
