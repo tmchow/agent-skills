@@ -6,4 +6,5 @@
 camofox-cloaked-browser
 chrome-devtools-axi
 clawpatch
+routerbase-model-gateway
 vhs-terminal-recorder
