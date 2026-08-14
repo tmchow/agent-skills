@@ -72,7 +72,6 @@ instructions.
 | Skill | What it does |
 | ----- | ------------ |
 | [`camofox-cloaked-browser`](camofox-cloaked-browser/) | Use [Camofox/Camoufox](https://github.com/jo-inc/camofox-browser) selectively for cloaked browser automation — npm/npx startup, OpenClaw plugin tools, raw REST commands, session/tab workflow, environment variables, process-scoped Hermes `CAMOFOX_URL`, and snapshot-after-action discipline. |
-| [`chrome-devtools-axi`](chrome-devtools-axi/) | Drive [`chrome-devtools-axi`](https://github.com/kunchenguid/chrome-devtools-axi) for Chrome DevTools Protocol browser automation — compact accessibility snapshots, stale-ref-safe refs, page interaction, console/network inspection, screenshots, Lighthouse, and performance traces. |
 | [`clawpatch`](clawpatch/) | Drive the [Clawpatch](https://clawpatch.ai) CLI for automated AI code review and per-finding fixes — scanner-only subagent dispatch (parallel) or full-cycle `clawpatch fix` loops, with wire-format JSON parsing, mode selection, and exit-code/pitfall handling. |
 | [`vhs-terminal-recorder`](vhs-terminal-recorder/) | Drive [Charmbracelet VHS](https://github.com/charmbracelet/vhs) for reproducible terminal recordings — `.tape` authoring, deterministic hidden setup, validation-vs-render discipline, GIF/MP4/WebM outputs, theme selection, and publish-safety guardrails. |
 

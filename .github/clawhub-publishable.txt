@@ -4,6 +4,5 @@
 # never published, even by manual dispatch. Lives beside the publish
 # workflow on purpose: one file to read to know what ships.
 camofox-cloaked-browser
-chrome-devtools-axi
 clawpatch
 vhs-terminal-recorder
