@@ -32,7 +32,8 @@ With it installed, your agent knows how to:
 
 ## Prerequisites
 
-- **Node.js + npm** — Clawpatch is an npm package (`npm install -g clawpatch`).
+- **Node.js 22+ + npm** — Clawpatch is an npm package
+  (`npm install -g clawpatch@0.7.2`).
 - **A coding-agent provider CLI** — one of `codex` (default), `claude` (routes
   through your local Claude Code CLI), `cursor`, `grok`, `opencode`, `pi`, or
   `acpx`.
