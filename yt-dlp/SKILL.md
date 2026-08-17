@@ -1,14 +1,10 @@
 ---
 name: yt-dlp
 description: >-
-  This skill should be used when a user wants media from a yt-dlp-supported URL
-  such as YouTube, Twitter/X, TikTok, Instagram, Bilibili, Vimeo, Twitch, and
-  similar sites downloaded, audio extracted, playlists or channels archived,
-  subtitles pulled, clips cut, formats inspected, or yt-dlp 403, bot-check, or
-  "only 360p" failures fixed. Do NOT use for editing or transcoding an existing
-  local file, watching or summarizing a video without saving it, searching
-  YouTube without a download, or generic file downloads that are not
-  streaming-site URLs.
+  yt-dlp. Use when the user wants to download, extract audio, pull subtitles,
+  clip, or archive a YouTube or other streaming-site URL, or when yt-dlp hits
+  403, bot-check, or only-360p. Not for local-file edit/transcode,
+  watch/summarize without saving, search, or generic downloads.
 version: 0.1.1
 license: MIT
 metadata:

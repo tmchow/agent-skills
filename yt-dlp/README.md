@@ -48,9 +48,6 @@ OpenClaw ClawHub lane:
 openclaw skills install yt-dlp
 ```
 
-The OpenClaw slug is provisional until this skill is opted in to ClawHub
-publishing.
-
 ## What the skill adds
 
 With it installed, your agent knows how to:

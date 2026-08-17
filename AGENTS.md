@@ -49,11 +49,13 @@ not look like one at the root.
 Required: `name`, `description`, `version`.
 
 - `name` — matches the directory; lowercase kebab-case.
-- `description` — third person ("This skill should be used when…"), ≤1024
-  characters, with **specific** trigger phrases. Make it tool/task-specific,
-  not generic: a skill wrapping tool X must not trigger on bare "do
-  X-category work" when X isn't named. Add an explicit "Do NOT use for …"
-  clause when the skill could be confused with a broader category.
+- `description` — a context pointer, ≤1024 characters. Front-load the
+  leading word/name, then state what it is and one trigger per distinct branch.
+  Keep it tool/task-specific: a skill wrapping tool X must not trigger on bare
+  "do X-category work" when X isn't named. Do not use identity boilerplate
+  ("This skill should be used when..."), synonym catalogs, or workflow
+  summaries. Add a "Not for ..." / "Do NOT use for ..." clause only for genuine
+  false-trigger neighbors.
 - `version` — semver; bump on meaningful change.
 
 Per-runtime metadata is **optional and additive**. Unknown frontmatter fields
