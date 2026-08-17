@@ -6,4 +6,4 @@
 camofox-cloaked-browser
 clawpatch
 vhs-terminal-recorder
-yt-dlp
+yt-dlp-cli

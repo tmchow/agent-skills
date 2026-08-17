@@ -1,11 +1,11 @@
 ---
-name: yt-dlp
+name: yt-dlp-cli
 description: >-
   yt-dlp. Use when the user wants to download, extract audio, pull subtitles,
   clip, or archive a YouTube or other streaming-site URL, or when yt-dlp hits
   403, bot-check, or only-360p. Not for local-file edit/transcode,
   watch/summarize without saving, search, or generic downloads.
-version: 0.1.1
+version: 0.1.2
 license: MIT
 metadata:
   hermes:
@@ -14,7 +14,7 @@ metadata:
     requires_toolsets: [terminal]
 ---
 
-# yt-dlp - agent workflow
+# yt-dlp-cli - agent workflow
 
 **Result:** After a user asks to download, extract, clip, subtitle, or archive
 media from a yt-dlp-supported URL, the agent has either produced the correct
@@ -66,15 +66,17 @@ duration and resolution with `ffprobe` or equivalent.
 ## Deltas from the default
 
 - Height cap: add `-f "bv*[height<=1080]+ba/b[height<=1080]"` and change only
-  the numeric cap. Use `yt-dlp -F "<url>"` first only when the user requested a
-  specific format ID or the first run returns the wrong shape; never invent
-  format IDs.
+  the numeric cap. Use `yt-dlp --no-playlist -F "<url>"` first only when the
+  user requested a specific format ID or the first run returns the wrong shape;
+  never invent format IDs.
 - Audio-only: replace `--merge-output-format mp4` with `-x`; add
   `--audio-format <format>` only when the user requested a container/codec such
   as mp3 or m4a.
-- Subtitles: add `--write-subs --sub-langs "<langs>"`; add
-  `--write-auto-subs` only when generated captions are acceptable, and
-  `--embed-subs` only when embedded subtitles are requested.
+- Subtitles: for subtitle-only jobs, replace media download/postprocessing with
+  `--skip-download --write-subs --sub-langs "<langs>"`. For video plus
+  subtitles, keep the default download and add
+  `--write-subs --sub-langs "<langs>"`. Add `--write-auto-subs` only when generated captions are
+  acceptable, and `--embed-subs` only when embedded subtitles are requested.
 - Output layout: change only `-P "<dir>"` and `-o "<template>"`. Keep `%(id)s`
   in the template unless the user requested a different stable naming scheme.
 - SponsorBlock: add `--sponsorblock-remove <categories>` only for categories
@@ -110,7 +112,8 @@ higher formats should exist, take this order:
 
 1. Preserve the command, exit status, and stderr.
 2. Update `yt-dlp`, verify `yt-dlp --version`, then retry a low-cost inspection
-   with `yt-dlp -F "<url>"` or `yt-dlp --print ... "<url>"`.
+   with `yt-dlp --no-playlist -F "<url>"` or
+   `yt-dlp --no-playlist --print ... "<url>"`.
 3. For wrong shape or site-specific syntax drift, consult live `yt-dlp --help`
    / `yt-dlp -h` and adjust the smallest delta needed.
 4. For YouTube 403, "confirm you're not a bot", missing higher qualities, nsig

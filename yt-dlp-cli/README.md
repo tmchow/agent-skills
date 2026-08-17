@@ -1,4 +1,4 @@
-# yt-dlp
+# yt-dlp-cli
 
 An agent skill for using [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) safely and
 reliably when a user asks an agent to save streaming-site media, extract audio,
@@ -21,31 +21,31 @@ format IDs, missing `ffmpeg`, or leaked cookie material.
 Install only this skill from the repo:
 
 ```bash
-npx skills add tmchow/agent-skills --skill yt-dlp
+npx skills add tmchow/agent-skills --skill yt-dlp-cli
 ```
 
 Add `--global` to install it at the user level instead of the current project:
 
 ```bash
-npx skills add tmchow/agent-skills --skill yt-dlp --global
+npx skills add tmchow/agent-skills --skill yt-dlp-cli --global
 ```
 
 Hermes CLI:
 
 ```bash
-hermes skills install tmchow/agent-skills/yt-dlp
+hermes skills install tmchow/agent-skills/yt-dlp-cli
 ```
 
 Hermes interactive slash command:
 
 ```text
-/skills install tmchow/agent-skills/yt-dlp
+/skills install tmchow/agent-skills/yt-dlp-cli
 ```
 
 OpenClaw ClawHub lane:
 
 ```bash
-openclaw skills install yt-dlp
+openclaw skills install yt-dlp-cli
 ```
 
 ## What the skill adds
