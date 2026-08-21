@@ -5,5 +5,6 @@
 # workflow on purpose: one file to read to know what ships.
 camofox-cloaked-browser
 clawpatch
+routerbase-model-gateway
 vhs-terminal-recorder
 yt-dlp-cli
